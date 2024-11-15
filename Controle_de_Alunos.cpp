@@ -7,6 +7,7 @@
 int main(void){
 	
 	printf("TESTANDO COMANDOS GIT");
+	printf("");
 	
 	return 0;
 }
