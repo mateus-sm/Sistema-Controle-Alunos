@@ -30,20 +30,21 @@ int main(void) {
 		clrscr();
 		switch (op) {
 			case 'A':
-				GravarAluno(); getch();
+				GravarAluno(); 
 			break;
 
 			case 'B':
-				A = InserirOrdenado(A); getch();
+				A = InserirOrdenado(A);
 			break;
 
 			case 'C':
-				printf("Alunos:"); ExibirAlunos(A); getch();
+				printf("Alunos:"); ExibirAlunos(A);
 			break;
 
 			default:
 				break;
 		}
+		getch();
 
 	} while (op != 27);
 
