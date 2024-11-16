@@ -22,20 +22,19 @@ struct TpAluno{
 	TpDisci *disciplina;
 };
 
-TpAluno *NovoNoAluno(char nome[TF], int dia, int mes, int ano, char curso[TF], char rua[TF], char bairro[TF], char cidade[TF], char estado[3]){
-	
+TpAluno *NovoNoAluno(TpAluno AlunoAux, TpData DataAux) {
 	TpAluno *aluno = new TpAluno;
 	
-	strcpy(aluno -> nome, nome);
-	strcpy(aluno -> curso, curso);
-	strcpy(aluno -> rua, rua);
-	strcpy(aluno -> bairro, bairro);
-	strcpy(aluno -> cidade, cidade);
-	strcpy(aluno -> estado, estado);
+	strcpy(aluno -> nome, AlunoAux.nome);
+	strcpy(aluno -> curso, AlunoAux.curso);
+	strcpy(aluno -> rua, AlunoAux.rua);
+	strcpy(aluno -> bairro, AlunoAux.bairro);
+	strcpy(aluno -> cidade, AlunoAux.cidade);
+	strcpy(aluno -> estado, AlunoAux.estado);
 	
-	aluno -> data.d = dia;
-	aluno -> data.m = mes;
-	aluno -> data.a = ano;
+	aluno -> data.d = DataAux.d;
+	aluno -> data.m = DataAux.m;
+	aluno -> data.a = DataAux.a;
 	
 	aluno -> prox = NULL;
 	aluno -> ant = NULL;
@@ -59,68 +58,59 @@ TpDisci *NovoNoDisciplina(char disci[TF], float nota1, float nota2, float freq){
 	return disc;
 }
 
-TpAluno *InserirOrdenado(TpAluno *aluno){
-	
+TpAluno *InserirOrdenado(TpAluno *aluno) {
+	TpAluno *aux, *No, AlunoAux;
 	TpData data;
-	char nome[TF], curso[TF], rua[TF], bairro[TF], cidade[TF], estado[3];
-	TpAluno *aux, *No;
 	
-	printf("Digite seu nome | digite 'sair' to close: ");
+	printf("Digite seu nome | digite 'sair' para encerrar: ");
 	fflush(stdin);
-	gets(nome);
+	gets(AlunoAux.nome);
 	
-	while(stricmp(nome, "SAIR") != 0 || stricmp(nome, "sair") != 0){
-		
-		printf("Digite sua idade dd/mm/aaaa: ");
-		scanf("%d %d %d", &data.d, &data.m, &data.a);
+	while (stricmp(AlunoAux.nome, "SAIR") != 0 || stricmp(AlunoAux.nome, "sair") != 0) {
+		printf("Digite sua idade (dd/mm/aaaa): ");
+		scanf("%d/%d/%d", &data.d, &data.m, &data.a);
 
 		printf("Digite seu curso: ");
 		fflush(stdin);
-		gets(curso);
+		gets(AlunoAux.curso);
 
 		printf("Digite sua rua: ");
 		fflush(stdin);
-		gets(rua);
+		gets(AlunoAux.rua);
 
 		printf("Digite seu bairro: ");
 		fflush(stdin);
-		gets(bairro);
+		gets(AlunoAux.bairro);
 
 		printf("Digite sua cidade: ");
 		fflush(stdin);
-		gets(cidade);
+		gets(AlunoAux.cidade);
 
-		printf("Por ultimo seu estado (ee): ");
+		printf("Digite seu estado (--): ");
 		fflush(stdin);
-		gets(estado);
+		gets(AlunoAux.estado);
 
-		No = NovoNoAluno(nome, data.d, data.m, data.a, curso, rua, bairro, cidade, estado);
+		No = NovoNoAluno(AlunoAux, data);
 		
-		if(aluno == NULL || stricmp(nome, aluno -> nome) < 0){
+		if (aluno == NULL || stricmp(AlunoAux.nome, aluno -> nome) < 0) {
 			No -> prox = aluno;
 
-			if(aluno != NULL)
+			if (aluno != NULL) {
 				aluno -> ant = No;
-
+			}
 			aluno = No;
-		}
-
-		else{
-
+		} else {
 			aux = aluno;
-			while(aux -> prox != NULL && stricmp(nome, aux -> nome) > 0)
+			while (aux -> prox != NULL && stricmp(AlunoAux.nome, aux -> nome) > 0) {
 				aux = aux -> prox;
+			}
 
-			if(stricmp(nome, aux -> nome) <= 0){
-
+			if (stricmp(AlunoAux.nome, aux -> nome) <= 0) {
 				No -> prox = aux;
 				No -> ant = aux -> ant;
 				aux -> ant = No;
 				aux -> ant -> prox = No;
-			}
-
-			else{
-
+			} else {
 				No -> ant = aux;
 				aux -> prox = No;
 			}
@@ -128,7 +118,7 @@ TpAluno *InserirOrdenado(TpAluno *aluno){
 
 		printf("\nDigite seu nome: ");
 		fflush(stdin);
-		gets(nome);
+		gets(AlunoAux.nome);
 	}
 
 	return aluno;
