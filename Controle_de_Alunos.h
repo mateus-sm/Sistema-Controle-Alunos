@@ -22,7 +22,7 @@ struct TpAluno{
 	TpDisci *disciplina;
 };
 
-TpAluno *NovoNoAluno(TpAluno AlunoAux, TpData DataAux) {
+TpAluno *NovoNoAluno(TpAluno AlunoAux) {
 	TpAluno *aluno = new TpAluno;
 	
 	strcpy(aluno -> nome, AlunoAux.nome);
@@ -32,9 +32,9 @@ TpAluno *NovoNoAluno(TpAluno AlunoAux, TpData DataAux) {
 	strcpy(aluno -> cidade, AlunoAux.cidade);
 	strcpy(aluno -> estado, AlunoAux.estado);
 	
-	aluno -> data.d = DataAux.d;
-	aluno -> data.m = DataAux.m;
-	aluno -> data.a = DataAux.a;
+	aluno -> data.d = AlunoAux.data.d;
+	aluno -> data.m = AlunoAux.data.m;
+	aluno -> data.a = AlunoAux.data.a;
 	
 	aluno -> prox = NULL;
 	aluno -> ant = NULL;
@@ -62,72 +62,49 @@ TpAluno *InserirOrdenado(TpAluno *aluno) {
 	TpAluno *aux, *No, AlunoAux;
 	TpData data;
 	
-	printf("Digite seu nome | digite 'sair' para encerrar: ");
-	fflush(stdin);
-	gets(AlunoAux.nome);
-	
-	while (stricmp(AlunoAux.nome, "SAIR") != 0 || stricmp(AlunoAux.nome, "sair") != 0) {
-		printf("Digite sua idade (dd/mm/aaaa): ");
-		scanf("%d/%d/%d", &data.d, &data.m, &data.a);
+	FILE *arq = fopen("Aluno.dat", "rb");
 
-		printf("Digite seu curso: ");
-		fflush(stdin);
-		gets(AlunoAux.curso);
+	if (arq == NULL) {
+		printf("Nao existem alunos no arquivo para serem inseridos na lista!");
+	} else {
+		while (!feof(arq)) {
+			fread(&AlunoAux, sizeof(TpAluno), 1, arq);
 
-		printf("Digite sua rua: ");
-		fflush(stdin);
-		gets(AlunoAux.rua);
+			No = NovoNoAluno(AlunoAux);
+			
+			if (aluno == NULL || stricmp(AlunoAux.nome, aluno -> nome) < 0) {
+				No -> prox = aluno;
 
-		printf("Digite seu bairro: ");
-		fflush(stdin);
-		gets(AlunoAux.bairro);
-
-		printf("Digite sua cidade: ");
-		fflush(stdin);
-		gets(AlunoAux.cidade);
-
-		printf("Digite seu estado (--): ");
-		fflush(stdin);
-		gets(AlunoAux.estado);
-
-		No = NovoNoAluno(AlunoAux, data);
-		
-		if (aluno == NULL || stricmp(AlunoAux.nome, aluno -> nome) < 0) {
-			No -> prox = aluno;
-
-			if (aluno != NULL) {
-				aluno -> ant = No;
-			}
-			aluno = No;
-		} else {
-			aux = aluno;
-			while (aux -> prox != NULL && stricmp(AlunoAux.nome, aux -> nome) > 0) {
-				aux = aux -> prox;
-			}
-
-			if (stricmp(AlunoAux.nome, aux -> nome) <= 0) {
-				No -> prox = aux;
-				No -> ant = aux -> ant;
-				aux -> ant = No;
-				aux -> ant -> prox = No;
+				if (aluno != NULL) {
+					aluno -> ant = No;
+				}
+				aluno = No;
 			} else {
-				No -> ant = aux;
-				aux -> prox = No;
+				aux = aluno;
+				while (aux -> prox != NULL && stricmp(AlunoAux.nome, aux -> nome) > 0) {
+					aux = aux -> prox;
+				}
+
+				if (stricmp(AlunoAux.nome, aux -> nome) <= 0) {
+					No -> prox = aux;
+					No -> ant = aux -> ant;
+					aux -> ant = No;
+					aux -> ant -> prox = No;
+				} else {
+					No -> ant = aux;
+					aux -> prox = No;
+				}
 			}
 		}
-
-		printf("\nDigite seu nome: ");
-		fflush(stdin);
-		gets(AlunoAux.nome);
+		printf("Dados lidos e Inseridos com sucesso!");
 	}
 
+	fclose(arq);
 	return aluno;
 }
 
-void ExibirAlunos(TpAluno *alunos){
-
-	if(alunos != NULL){
-
+void ExibirAlunos(TpAluno *alunos) {
+	if (alunos != NULL) {
 		printf("\nInformacoes do %s: \n\n", alunos -> nome);
 		printf("Ano de Nasc: %d/%d/%d\n", alunos -> data.d, alunos -> data.m, alunos -> data.a);
 		printf("Curso: %s\n", alunos -> curso);
@@ -138,6 +115,4 @@ void ExibirAlunos(TpAluno *alunos){
 
 		ExibirAlunos(alunos = alunos -> prox);
 	}
-
-	getch();
 }
