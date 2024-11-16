@@ -8,7 +8,8 @@
 
 void GravarAluno();
 
-char menu() {
+char menu(){
+	
 	clrscr();
 	printf("* * * MENU * * *\n");
 	printf("[A] Cadastrar aluno no arquivo\n");
@@ -22,23 +23,27 @@ char menu() {
 
 int main(void) {
 	TpAluno *A = NULL;
+	TpDescr D;
 	char op;
+	
+	InicializarDescritor(D);
 
 	do {
 		op = menu();
-
 		clrscr();
+
 		switch (op) {
 			case 'A':
-				GravarAluno(); 
+				GravarAluno();
 			break;
 
 			case 'B':
-				A = InserirOrdenado(A);
+				InserirOrdenadoDescritor(D);
 			break;
 
 			case 'C':
-				printf("Alunos:"); ExibirAlunos(A);
+				printf("* * * ALUNOS * * *\n");
+				ExibirAlunos(D);
 			break;
 
 			default:
@@ -51,21 +56,22 @@ int main(void) {
 	return 0;
 }
 
-void GravarAluno() {
+void GravarAluno(){
 	TpAluno AlunoAux;
 	TpData data;
+
 	FILE *arq = fopen("aluno.dat", "ab");
 
 	if (arq == NULL) {
 		printf("Erro ao abrir arquivo!");
 	} else {
-		printf("* * *Gravar Aluno* * *\n");
+		printf("* * * GRAVAR ALUNO * * *\n");
 		printf("Digite seu nome: ");
 		fflush(stdin);
 		gets(AlunoAux.nome);
 	
 		printf("Digite sua idade (dd/mm/aaaa): ");
-		scanf("%d/%d/%d", &AlunoAux.data.d, &AlunoAux.data.m, &AlunoAux.data.a);
+		scanf("%d %d %d", &AlunoAux.data.d, &AlunoAux.data.m, &AlunoAux.data.a);
 
 		printf("Digite seu curso: ");
 		fflush(stdin);

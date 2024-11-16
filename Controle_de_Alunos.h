@@ -6,11 +6,6 @@ struct TpDisci{
 	TpDisci *prox;
 };
 
-struct TpDiscr{
-	int qtde;
-	TpDisci *inicio, *fim;
-};
-
 struct TpData{
 	int d, m, a;
 };
@@ -20,6 +15,11 @@ struct TpAluno{
 	TpData data;
 	TpAluno *prox, *ant;
 	TpDisci *disciplina;
+};
+
+struct TpDescr{
+	int qtde;
+	TpAluno *inicio, *fim;
 };
 
 TpAluno *NovoNoAluno(TpAluno AlunoAux) {
@@ -58,61 +58,86 @@ TpDisci *NovoNoDisciplina(char disci[TF], float nota1, float nota2, float freq){
 	return disc;
 }
 
-TpAluno *InserirOrdenado(TpAluno *aluno) {
-	TpAluno *aux, *No, AlunoAux;
-	TpData data;
+void InicializarDescritor(TpDescr &D){
+	
+	D.qtde = 0;
+	D.inicio = D.fim = NULL;
+}
+
+void InserirOrdenadoDescritor(TpDescr &D){
+	
+	TpAluno *No, *ant, *atual, AlunoAux;
 	
 	FILE *arq = fopen("Aluno.dat", "rb");
 
-	if (arq == NULL) {
+	if (arq == NULL) 
 		printf("Nao existem alunos no arquivo para serem inseridos na lista!");
-	} else {
-		while (!feof(arq)) {
-			fread(&AlunoAux, sizeof(TpAluno), 1, arq);
+	
+	else {
 
+		fread(&AlunoAux, sizeof(TpAluno), 1, arq);
+
+		while(!feof(arq)){
+			
 			No = NovoNoAluno(AlunoAux);
 			
-			if (aluno == NULL || stricmp(AlunoAux.nome, aluno -> nome) < 0) {
-				No -> prox = aluno;
-
-				if (aluno != NULL) {
-					aluno -> ant = No;
-				}
-				aluno = No;
-			} else {
-				aux = aluno;
-				while (aux -> prox != NULL && stricmp(AlunoAux.nome, aux -> nome) > 0) {
-					aux = aux -> prox;
-				}
-
-				if (stricmp(AlunoAux.nome, aux -> nome) <= 0) {
-					No -> prox = aux;
-					No -> ant = aux -> ant;
-					aux -> ant = No;
-					aux -> ant -> prox = No;
-				} else {
-					No -> ant = aux;
-					aux -> prox = No;
-				}
+			//1º caso - caso lista estiver vazia
+			if(D.inicio == NULL)
+				D.inicio = D.fim = No;
+			
+			//2º caso
+			else if(stricmp(D.inicio -> nome, AlunoAux.nome) >= 0){
+				
+				No -> prox = D.inicio;
+				D.inicio = No;
 			}
+			
+			//3º caso
+			else if(stricmp(D.fim -> nome, AlunoAux.nome) <= 0){
+				
+				D.fim -> prox = No;
+				D.fim = No;
+			}
+			
+			//4º caso
+			else{
+				
+				ant = D.inicio;
+				atual = D.inicio -> prox;
+				
+				while(stricmp(atual -> nome, AlunoAux.nome) < 0){
+					
+					ant = atual;
+					atual = atual -> prox;
+				}
+				
+				No -> prox = ant -> prox;
+				ant -> prox = No;
+			}
+			
+			D.qtde++;
+
+			fread(&AlunoAux, sizeof(TpAluno), 1, arq);
 		}
-		printf("Dados lidos e Inseridos com sucesso!");
+		printf("\nArquivo lido e dados inseridos na lista com sucesso!");
 	}
 
 	fclose(arq);
-	return aluno;
 }
 
-void ExibirAlunos(TpAluno *alunos) {
-	if (alunos != NULL) {
-		printf("\nInformacoes do %s: \n\n", alunos -> nome);
-		printf("Ano de Nasc: %d/%d/%d\n", alunos -> data.d, alunos -> data.m, alunos -> data.a);
-		printf("Curso: %s\n", alunos -> curso);
-		printf("Rua: %s\n", alunos -> rua);
-		printf("Bairro: %s\n", alunos -> bairro);
-		printf("Cidade: %s\n", alunos -> cidade);
-		printf("Estado: %s\n", alunos -> estado);
+void ExibirAlunos(TpDescr D) {
 
-		ExibirAlunos(alunos = alunos -> prox);
+	if (D.qtde != 0) {
+		printf("\nInformacoes do %s: \n\n", D.inicio -> nome);
+		printf("Ano de Nasc: %d/%d/%d\n", D.inicio -> data.d, D.inicio -> data.m, D.inicio -> data.a);
+		printf("Curso: %s\n", D.inicio -> curso);
+		printf("Rua: %s\n", D.inicio -> rua);
+		printf("Bairro: %s\n", D.inicio -> bairro);
+		printf("Cidade: %s\n", D.inicio -> cidade);
+		printf("Estado: %s\n", D.inicio -> estado);
+		D.inicio = D.inicio -> prox;
+		D.qtde--;
+
+		ExibirAlunos(D);
 	}
 }
