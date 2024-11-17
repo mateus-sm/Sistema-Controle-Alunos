@@ -8,111 +8,11 @@
 
 void GravarAluno();
 void GravarDisciplina();
-
-void limparQuadro(void){
-	int l = 12, c = 9;
-	
-	while(c <= 22){
-		gotoxy(l,c);
-		printf("                                                               ");
-		c++;
-	}
-}
-
-void limparTitulo(void){
-	gotoxy(12,7);
-	printf("                                                              ");
-	gotoxy(76,23);
-}
-
-void moldura(int colunai, int linhai, int colunaf, int linhaf, int frente, int fundo){
-	textcolor(frente);
-	textbackground(fundo);
-	
-	gotoxy(colunai, linhai); 
-	printf("%c", 201); //canto superior esquerdo
-	gotoxy(colunaf, linhai); 
-	printf("%c", 187);//canto superior direito
-	gotoxy(colunai, linhaf); 
-	printf("%c", 200); //canto inferior esquerdo
-	gotoxy(colunaf, linhaf); 
-	printf("%c", 188);//canto inferior direito
-	
-	
-	for(int a = colunai + 1; a < colunaf; a++){ 
-		gotoxy(a, linhai); printf("%c", 205); 			
-		gotoxy(a, linhaf); printf("%c", 205);
-	}
-
-	for(int b = linhai + 1; b < linhaf; b++){
-		gotoxy(colunai, b); printf("%c", 186);
-		gotoxy(colunaf, b); printf("%c", 186);
-	}
-	
-	
-	//voltar cores de texto e fundo padrão
-	textcolor(7);
-	textbackground(0);
-	
-}
-
-void moldeMenuInicial(void){
-	//clrscr();
-	
-	moldura(10, 5, 75, 23, 7, 2); //borda externa //64
-	moldura(11, 6, 74, 8, 7, 0); //titulo
-
-	moldura(12,10,28,14,7,0); //ITEM 1 
-	moldura(34,10,51,14,7,0); //ITEM 2 
-	moldura(57,10,73,14,7,0); //ITEM 3 
-
-	moldura(12,17,28,21,7,0); //ITEM 4 
-	moldura(34,17,51,21,7,0); //ITEM 5 
-	moldura(57,17,73,21,7,0); //ITEM 6 
-
-	gotoxy(30, 7); 
-	printf("* * * Controle de Alunos * * *");
-			
-}
-
-char menuNum(void) {
-	clrscr();
-	moldeMenuInicial();
-	
-	gotoxy(13,11);
-	printf("[A] Cadastrar");
-	gotoxy(17,12);
-	printf("Alunos");
-
-	gotoxy(35,11);
-	printf("[B] Ler");
-	gotoxy(39,12);
-	printf("Alunos");
-
-	gotoxy(58,11);
-	printf("[C] Exibir");
-	gotoxy(62,12);
-	printf("Alunos");
-
-	gotoxy(13,18);
-	printf("[D] Cadastrar");
-	gotoxy(17,19);
-	printf("Disciplinas");
-
-	gotoxy(35,18);
-	printf("[E] Ler");
-	gotoxy(39,19);
-	printf("Disciplinas");
-	
-	gotoxy(58,18);
-	printf("[F] Exibir");
-	gotoxy(62,19);
-	printf("Disciplinas");
-
-	gotoxy(76,23);
-
-	return toupper(getch());
-}
+void limparQuadro(void);
+void limparTitulo(void);
+void moldura(int colunai, int linhai, int colunaf, int linhaf, int frente, int fundo);
+void moldeMenuInicial(void);
+char menuNum(void);
 
 char menu(){
 	
@@ -302,4 +202,109 @@ void GravarAluno() {
 	}
 
 	fclose(arq);
+}
+
+void limparQuadro(void){
+	int l = 12, c = 9;
+	
+	while(c <= 22){
+		gotoxy(l,c);
+		printf("                                                               ");
+		c++;
+	}
+}
+
+void limparTitulo(void){
+	gotoxy(12,7);
+	printf("                                                              ");
+	gotoxy(76,23);
+}
+
+void moldura(int colunai, int linhai, int colunaf, int linhaf, int frente, int fundo){
+	textcolor(frente);
+	textbackground(fundo);
+	
+	gotoxy(colunai, linhai); 
+	printf("%c", 201); //canto superior esquerdo
+	gotoxy(colunaf, linhai); 
+	printf("%c", 187);//canto superior direito
+	gotoxy(colunai, linhaf); 
+	printf("%c", 200); //canto inferior esquerdo
+	gotoxy(colunaf, linhaf); 
+	printf("%c", 188);//canto inferior direito
+	
+	
+	for(int a = colunai + 1; a < colunaf; a++){ 
+		gotoxy(a, linhai); printf("%c", 205); 			
+		gotoxy(a, linhaf); printf("%c", 205);
+	}
+
+	for(int b = linhai + 1; b < linhaf; b++){
+		gotoxy(colunai, b); printf("%c", 186);
+		gotoxy(colunaf, b); printf("%c", 186);
+	}
+	
+	
+	//voltar cores de texto e fundo padrão
+	textcolor(7);
+	textbackground(0);
+	
+}
+
+void moldeMenuInicial(void){
+	//clrscr();
+	
+	moldura(10, 5, 75, 23, 7, 2); //borda externa //64
+	moldura(11, 6, 74, 8, 7, 0); //titulo
+
+	moldura(12,10,28,14,7,0); //ITEM 1 
+	moldura(34,10,51,14,7,0); //ITEM 2 
+	moldura(57,10,73,14,7,0); //ITEM 3 
+
+	moldura(12,17,28,21,7,0); //ITEM 4 
+	moldura(34,17,51,21,7,0); //ITEM 5 
+	moldura(57,17,73,21,7,0); //ITEM 6 
+
+	gotoxy(30, 7); 
+	printf("* * * Controle de Alunos * * *");
+			
+}
+
+char menuNum(void) {
+	clrscr();
+	moldeMenuInicial();
+	
+	gotoxy(13,11);
+	printf("[A] Cadastrar");
+	gotoxy(17,12);
+	printf("Alunos");
+
+	gotoxy(35,11);
+	printf("[B] Ler");
+	gotoxy(39,12);
+	printf("Alunos");
+
+	gotoxy(58,11);
+	printf("[C] Exibir");
+	gotoxy(62,12);
+	printf("Alunos");
+
+	gotoxy(13,18);
+	printf("[D] Cadastrar");
+	gotoxy(17,19);
+	printf("Disciplinas");
+
+	gotoxy(35,18);
+	printf("[E] Ler");
+	gotoxy(39,19);
+	printf("Disciplinas");
+	
+	gotoxy(58,18);
+	printf("[F] Exibir");
+	gotoxy(62,19);
+	printf("Disciplinas");
+
+	gotoxy(76,23);
+
+	return toupper(getch());
 }
