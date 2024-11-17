@@ -17,10 +17,20 @@ struct TpAluno{
 	TpDisci *disciplina;
 };
 
-struct TpDescr{
+struct TpDescritorAluno {
 	int qtde;
 	TpAluno *inicio, *fim;
 };
+
+struct TpDescritorDisciplina {
+	int qtde;
+	TpDisci *inicio, *fim;
+};
+
+void InicializarDescritorAluno(TpDescritorAluno &D) {
+	D.qtde = 0;
+	D.inicio = D.fim = NULL;
+}
 
 TpAluno *NovoNoAluno(TpAluno AlunoAux) {
 	TpAluno *aluno = new TpAluno;
@@ -43,28 +53,7 @@ TpAluno *NovoNoAluno(TpAluno AlunoAux) {
 	return aluno;
 }
 
-TpDisci *NovoNoDisciplina(char disci[TF], float nota1, float nota2, float freq){
-	
-	TpDisci *disc = new TpDisci;
-	
-	strcpy(disc -> disci, disci);
-
-	disc -> nota1 = nota1;
-	disc -> nota2 = nota2;
-	disc -> freq = freq;
-
-	disc -> prox = NULL;
-	
-	return disc;
-}
-
-void InicializarDescritor(TpDescr &D){
-	
-	D.qtde = 0;
-	D.inicio = D.fim = NULL;
-}
-
-void InserirOrdenadoDescritor(TpDescr &D){
+void InserirAlunoOrdenado(TpDescritorAluno &D) {
 	
 	TpAluno *No, *ant, *atual, AlunoAux;
 	
@@ -119,13 +108,13 @@ void InserirOrdenadoDescritor(TpDescr &D){
 
 			fread(&AlunoAux, sizeof(TpAluno), 1, arq);
 		}
-		printf("\nArquivo lido e dados inseridos na lista com sucesso!");
+		printf("Arquivo lido e dados inseridos na lista com sucesso!");
 	}
 
 	fclose(arq);
 }
 
-void ExibirAlunos(TpDescr D) {
+void ExibirAlunos(TpDescritorAluno D) {
 
 	if (D.qtde != 0) {
 		printf("\nInformacoes do %s: \n\n", D.inicio -> nome);
@@ -140,4 +129,85 @@ void ExibirAlunos(TpDescr D) {
 
 		ExibirAlunos(D);
 	}
+}
+
+void InicializarDescritorDisciplina(TpDescritorDisciplina &D) {
+	D.inicio = D.fim = NULL;
+	D.qtde = 0;
+}
+
+TpDisci *NovoNoDisciplina(TpDisci Disciplina) {
+	TpDisci *Pont = new TpDisci;
+	
+	strcpy(Pont->disci, Disciplina.disci);
+	Pont->nota1 = Disciplina.nota1;
+	Pont->nota2 = Disciplina.nota2;
+	Pont->freq = Disciplina.freq;
+	Pont->prox = NULL;
+	
+	return Pont;
+}
+
+//Insere ordenado por nome da disciplina
+void InserirOrdenadoDisciplina(TpDescritorDisciplina &D) {
+	TpDisci *No, *ant, *atual, DisciAux;
+
+	FILE *arq = fopen("Disciplinas.dat", "rb");
+
+	if (arq == NULL) {
+		printf("Arquivo de Disciplinas vazio!");
+	} else {
+		fread(&DisciAux, sizeof(TpDisci), 1, arq);
+
+		while(!feof(arq)) {
+			No = NovoNoDisciplina(DisciAux);
+
+			D.qtde++;
+			if (D.inicio == NULL) {
+				D.inicio = D.fim = No;
+			} else {
+				if (stricmp(D.inicio->disci, DisciAux.disci) >= 0) {
+					No->prox = D.inicio;
+					D.inicio = No;
+				} else {
+					if (stricmp(D.inicio->disci, DisciAux.disci) <= 0) {
+						D.fim = No;
+						D.fim->prox = No;
+					} else {
+						ant = D.inicio;
+						atual = D.inicio->prox;
+
+						while (stricmp(atual->disci, DisciAux.disci) < 0) {
+							ant = atual;
+							atual = atual->prox;
+						}
+
+						No->prox = atual->prox;
+						atual->prox = No;
+					}
+				}
+			}
+
+			fread(&DisciAux, sizeof(TpDisci), 1, arq);
+		}
+
+		printf("Arquivo lido e dados inseridos na lista com sucesso!");
+	}
+
+	fclose(arq);
+}
+
+void ExibirDisciplina(TpDescritorDisciplina D) {
+    TpDisci *atual = D.inicio;
+	int i = D.qtde;
+
+    while (i != 0) {
+        printf("\nDisciplina: %s\n", atual->disci);
+        printf("Nota 1: %.2f\n", atual->nota1);
+        printf("Nota 2: %.2f\n", atual->nota2);
+        printf("Frequencia: %.2f\n", atual->freq);
+
+        atual = atual->prox;
+		i--;
+    }
 }

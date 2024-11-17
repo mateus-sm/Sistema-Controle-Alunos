@@ -7,14 +7,18 @@
 #include "Controle_de_Alunos.h"
 
 void GravarAluno();
+void GravarDisciplina();
 
 char menu(){
 	
 	clrscr();
 	printf("* * * MENU * * *\n");
-	printf("[A] Cadastrar aluno no arquivo\n");
-	printf("[B] Ler alunos cadastrados\n");
-	printf("[C] Exibir alunos cadastrados\n");
+	printf("[A] Cadastrar Aluno no arquivo\n");
+	printf("[B] Ler Alunos cadastrados\n");
+	printf("[C] Exibir Alunos cadastrados\n");
+	printf("[D] Cadastrar Disciplina no arquivo\n");
+	printf("[E] Ler Disciplinas cadastradas\n");
+	printf("[F] Exibir Disciplinas cadastrados\n");
 	printf("[ESC] SAIR\n");
 	printf("Opcao: ");
 
@@ -23,10 +27,12 @@ char menu(){
 
 int main(void) {
 	TpAluno *A = NULL;
-	TpDescr D;
+	TpDescritorAluno DescAluno;
+	TpDescritorDisciplina DescDisci;
 	char op;
 	
-	InicializarDescritor(D);
+	InicializarDescritorAluno(DescAluno);
+	InicializarDescritorDisciplina(DescDisci);
 
 	do {
 		op = menu();
@@ -38,12 +44,25 @@ int main(void) {
 			break;
 
 			case 'B':
-				InserirOrdenadoDescritor(D);
+				InserirAlunoOrdenado(DescAluno);
 			break;
 
 			case 'C':
 				printf("* * * ALUNOS * * *\n");
-				ExibirAlunos(D);
+				ExibirAlunos(DescAluno);
+			break;
+
+			case 'D':
+				GravarDisciplina();
+			break;
+
+			case 'E':
+				InserirOrdenadoDisciplina(DescDisci);
+			break;
+
+			case 'F':
+				printf("* * * DISCIPLINAS * * *\n");
+				ExibirDisciplina(DescDisci);
 			break;
 
 			default:
@@ -56,11 +75,42 @@ int main(void) {
 	return 0;
 }
 
-void GravarAluno(){
+void GravarDisciplina() {
+	TpDisci Disciplina;
+
+	FILE *arq = fopen("Disciplinas.dat", "ab");
+
+	if (arq == NULL) {
+		printf("Erro ao abrir arquivo!");
+	} else {
+		printf("* * * GRAVAR DISCIPLINA * * *\n");
+		printf("Digite o nome da disciplina: ");
+		fflush(stdin);
+		gets(Disciplina.disci);
+	
+		printf("Digite a nota 1: ");
+		scanf("%f", &Disciplina.nota1);
+
+		printf("Digite a nota 2: ");
+		scanf("%f", &Disciplina.nota2);
+
+		printf("Digite a frequencia: ");
+		fflush(stdin);
+		scanf("%f", &Disciplina.freq);
+
+		fwrite(&Disciplina, sizeof(TpDisci), 1, arq);
+
+		printf("Dados gravados com sucesso!\n");
+	}
+
+	fclose(arq);
+}
+
+void GravarAluno() {
 	TpAluno AlunoAux;
 	TpData data;
 
-	FILE *arq = fopen("aluno.dat", "ab");
+	FILE *arq = fopen("Aluno.dat", "ab");
 
 	if (arq == NULL) {
 		printf("Erro ao abrir arquivo!");
