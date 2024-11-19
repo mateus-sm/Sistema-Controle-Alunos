@@ -138,7 +138,7 @@ void GravarAluno() {
 	TpData data;
 	int l = 30, c = 10;
 
-	FILE *arq = fopen("Alunos.dat", "ab");
+	FILE *arq = fopen("Aluno.dat", "ab");
 
 	if (arq == NULL) {
 		gotoxy(30,10);

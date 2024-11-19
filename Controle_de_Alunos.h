@@ -57,7 +57,7 @@ void InserirAlunoOrdenado(TpDescritorAluno &D) {
 	
 	TpAluno *No, *ant, *atual, AlunoAux;
 	
-	FILE *arq = fopen("Alunos.dat", "rb");
+	FILE *arq = fopen("Aluno.dat", "rb");
 
 	if (arq == NULL) 
 		printf("Nao existem alunos no arquivo para serem inseridos na lista!");
