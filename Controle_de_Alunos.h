@@ -53,6 +53,22 @@ TpAluno *NovoNoAluno(TpAluno AlunoAux) {
 	return aluno;
 }
 
+int BuscaDisciplina(TpDisci Disciplina){
+	
+	FILE *arq = fopen("Disciplinas.dat", "rb");
+	
+	TpDisci aux;
+	
+	fread(&aux, sizeof(TpDisci), 1, arq);
+	while(!feof(arq) && stricmp(aux.disci, Disciplina.disci) != 0)
+		fread(&aux, sizeof(TpDisci), 1, arq);
+	
+	if(!feof(arq))
+		return 1;
+	
+	return 0;
+}
+
 void InserirAlunoOrdenado(TpDescritorAluno &D) {
 	
 	TpAluno *No, *ant, *atual, AlunoAux;
@@ -105,6 +121,7 @@ void InserirAlunoOrdenado(TpDescritorAluno &D) {
 	}
 
 	fclose(arq);
+	getch();
 }
 
 void ExibirAlunos(TpDescritorAluno D) {
@@ -188,19 +205,17 @@ void InserirOrdenadoDisciplina(TpDescritorDisciplina &D) {
 	}
 
 	fclose(arq);
+	getch();
 }
 
 void ExibirDisciplina(TpDescritorDisciplina D) {
-    TpDisci *atual = D.inicio;
-	int i = D.qtde;
+	
+    if (D.qtde != 0) {
+        printf("Disciplina: %s\n", D.inicio -> disci);
 
-    while (i != 0) {
-        printf("\nDisciplina: %s\n", atual->disci);
-        printf("Nota 1: %.2f\n", atual->nota1);
-        printf("Nota 2: %.2f\n", atual->nota2);
-        printf("Frequencia: %.2f\n", atual->freq);
-
-        atual = atual->prox;
-		i--;
+        D.inicio = D.inicio -> prox;
+		D.qtde--;
+		
+		ExibirDisciplina(D);
     }
 }

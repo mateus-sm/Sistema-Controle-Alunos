@@ -7,7 +7,7 @@
 #include "Controle_de_Alunos.h"
 
 void GravarAluno();
-void GravarDisciplina();
+void GravarDisciplina(TpDescritorDisciplina &DescDisci);
 void limparQuadro(void);
 void limparTitulo(void);
 void moldura(int colunai, int linhai, int colunaf, int linhaf, int frente, int fundo);
@@ -38,7 +38,7 @@ int main(void) {
 	
 	InicializarDescritorAluno(DescAluno);
 	InicializarDescritorDisciplina(DescDisci);
-
+	
 	do {
 		op = menuNum();
 		limparQuadro();
@@ -55,10 +55,11 @@ int main(void) {
 			case 'C':
 				printf("* * * ALUNOS * * *\n");
 				ExibirAlunos(DescAluno);
+				getch();
 			break;
 
 			case 'D':
-				GravarDisciplina();
+				GravarDisciplina(DescDisci);
 			break;
 
 			case 'E':
@@ -66,21 +67,23 @@ int main(void) {
 			break;
 
 			case 'F':
-				printf("* * * DISCIPLINAS * * *\n");
+				limparTitulo();
+				gotoxy(32, 7);
+				printf("* * * DISCIPLINAS * * *");
 				ExibirDisciplina(DescDisci);
+				getch();
 			break;
 
 			default:
 				break;
 		}
-		getch();
-
+		
 	} while (op != 27);
-
+	
 	return 0;
 }
 
-void GravarDisciplina() {
+void GravarDisciplina(TpDescritorDisciplina &D) {
 	TpDisci Disciplina;
 	int l = 30, c = 10;
 
@@ -98,39 +101,31 @@ void GravarDisciplina() {
 		fflush(stdin);
 		c++; gotoxy(l, c);
 		gets(Disciplina.disci);
-		while(strcmp(Disciplina.disci, "") != 0 ){
-			c++;gotoxy(l, c);
-			printf("Digite a nota 1: ");
-			c++; gotoxy(l, c);
-			scanf("%f", &Disciplina.nota1);
-			c++; gotoxy(l, c);
-			printf("Digite a nota 2: ");
-			c++; gotoxy(l, c);
-			scanf("%f", &Disciplina.nota2);
-			c++; gotoxy(l, c);
-			printf("Digite a frequencia: ");
-			fflush(stdin);
-			c++; gotoxy(l, c);
-			scanf("%f", &Disciplina.freq);
+		
+		fclose(arq);
+	
+		if(!BuscaDisciplina(Disciplina)){
+			
+			arq = fopen("Disciplinas.dat", "ab");
 			
 			fwrite(&Disciplina, sizeof(TpDisci), 1, arq);
 			limparQuadro();
-			gotoxy(30, 10);
+			
+			gotoxy(30, 12);
 			printf("Dados gravados com sucesso!");
-			getch();
-			limparQuadro();
-
-			l = 30, c = 10;
-			gotoxy(l, c);
-			printf("Digite o nome da disciplina: ");
-			fflush(stdin);
-			c++; gotoxy(l, c);
-			gets(Disciplina.disci);
+			
+			fclose(arq);
+			
+		} else {
+			gotoxy(30, 12);
+			printf("Disciplina ja cadastrada");
 		}
 		
+		arq = fopen("Disciplinas.dat", "ab");
 	}
 
 	fclose(arq);
+	getch();
 }
 
 void GravarAluno() {
@@ -186,10 +181,7 @@ void GravarAluno() {
 
 			fwrite(&AlunoAux, sizeof(TpAluno), 1, arq);
 			limparQuadro();
-			gotoxy(30, 10);
-			printf("Dados gravados com sucesso!");
-			getch();
-			limparQuadro();
+			
 
 			l = 30, c = 10;	
 			gotoxy(l,c);
@@ -199,7 +191,11 @@ void GravarAluno() {
 			gets(AlunoAux.nome);
 		}
 		
-	}
+		gotoxy(30, 10);
+		printf("Dados gravados com sucesso!");
+		getch();
+		limparQuadro();
+	}	
 
 	fclose(arq);
 }
@@ -207,7 +203,7 @@ void GravarAluno() {
 void limparQuadro(void){
 	int l = 12, c = 9;
 	
-	while(c <= 22){
+	while(c <= 24){
 		gotoxy(l,c);
 		printf("                                                               ");
 		c++;
@@ -254,7 +250,7 @@ void moldura(int colunai, int linhai, int colunaf, int linhaf, int frente, int f
 void moldeMenuInicial(void){
 	//clrscr();
 	
-	moldura(10, 5, 75, 23, 7, 2); //borda externa //64
+	moldura(10, 5, 75, 25, 7, 2); //borda externa //64
 	moldura(11, 6, 74, 8, 7, 0); //titulo
 
 	moldura(12,10,28,14,7,0); //ITEM 1 
