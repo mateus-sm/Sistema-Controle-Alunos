@@ -57,7 +57,7 @@ void InserirAlunoOrdenado(TpDescritorAluno &D) {
 	
 	TpAluno *No, *ant, *atual, AlunoAux;
 	
-	FILE *arq = fopen("Aluno.dat", "rb");
+	FILE *arq = fopen("Alunos.dat", "rb");
 
 	if (arq == NULL) 
 		printf("Nao existem alunos no arquivo para serem inseridos na lista!");
@@ -71,37 +71,30 @@ void InserirAlunoOrdenado(TpDescritorAluno &D) {
 			No = NovoNoAluno(AlunoAux);
 			
 			//1º caso - caso lista estiver vazia
-			if(D.inicio == NULL)
+			if (D.inicio == NULL) {
 				D.inicio = D.fim = No;
-			
-			//2º caso
-			else if(stricmp(D.inicio -> nome, AlunoAux.nome) >= 0){
-				
-				No -> prox = D.inicio;
+			} else if (stricmp(D.inicio->nome, AlunoAux.nome) >= 0) {
+				//2º caso - Elemento novo é menor que Inicio
+				No->prox = D.inicio;
+				D.inicio->ant = No;
 				D.inicio = No;
-			}
-			
-			//3º caso
-			else if(stricmp(D.fim -> nome, AlunoAux.nome) <= 0){
-				
-				D.fim -> prox = No;
-				D.fim = No;
-			}
-			
-			//4º caso
-			else{
-				
-				ant = D.inicio;
-				atual = D.inicio -> prox;
-				
-				while(stricmp(atual -> nome, AlunoAux.nome) < 0){
-					
-					ant = atual;
+			} else {
+				//3º caso - Busca
+				atual = D.inicio;
+				while ((atual->prox != NULL) && (stricmp(atual->nome, AlunoAux.nome) < 0)) {
 					atual = atual -> prox;
 				}
-				
-				No -> prox = ant -> prox;
-				ant -> prox = No;
+
+				if (strcmp(atual->nome, AlunoAux.nome) >= 0) {
+					No->prox = atual;
+					atual->ant = D.fim->ant;
+					atual->ant = No;
+					atual->ant->prox = No;
+				} else {
+					No->ant = atual;
+					atual->prox = No;
+					D.fim = No;
+				}
 			}
 			
 			D.qtde++;
