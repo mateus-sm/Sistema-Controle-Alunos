@@ -73,6 +73,10 @@ int main(void) {
 				limparQuadro();
 				ExibirDisciplina();
 			break;
+			
+			case 'G':
+				AlterarInfoAlunos();
+			break;
 
 			default:
 				break;
@@ -104,7 +108,7 @@ void GravarDisciplina(TpDescritorDisciplina &D) {
 		
 		fclose(arq);
 	
-		if(!BuscaDisciplina(Disciplina)){
+		if(BuscaDisciplina(Disciplina) == -1){
 			
 			arq = fopen("Disciplinas.dat", "ab");
 			

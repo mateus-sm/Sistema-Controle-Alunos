@@ -53,6 +53,20 @@ TpAluno *NovoNoAluno(TpAluno AlunoAux) {
 	return aluno;
 }
 
+int BuscaAluno(char nome[TF], FILE *arq){
+	
+	TpAluno AlunoAux;
+	
+	fread(&AlunoAux, sizeof(TpAluno), 1, arq);
+	while(!feof(arq) && stricmp(AlunoAux.nome, nome) != 0)
+		fread(&AlunoAux, sizeof(TpAluno), 1, arq);
+	
+	if(!feof(arq))
+		return ftell(arq) - sizeof(TpAluno);
+	
+	return -1;
+}
+
 int BuscaDisciplina(TpDisci Disciplina){
 	
 	FILE *arq = fopen("Disciplinas.dat", "rb");
@@ -64,9 +78,9 @@ int BuscaDisciplina(TpDisci Disciplina){
 		fread(&aux, sizeof(TpDisci), 1, arq);
 	
 	if(!feof(arq))
-		return 1;
+		return ftell(arq) - sizeof(TpAluno);
 	
-	return 0;
+	return -1;
 }
 
 void InserirAlunoOrdenado(TpDescritorAluno &D) {
@@ -123,6 +137,90 @@ void InserirAlunoOrdenado(TpDescritorAluno &D) {
 		printf("Arquivo lido e dados inseridos na lista com sucesso!");
 	}
 
+	fclose(arq);
+	getch();
+}
+
+void AlterarInfoAlunos(void){
+	
+	system("cls");
+	
+	FILE *arq = fopen("Aluno.dat", "rb+");
+	
+	TpAluno AlunoAux;
+	char op;
+	
+	if(arq == NULL)
+		printf("Sem alunos no arquivo para realizar alteracoes!\n");
+		
+	else{
+		printf("Aluno a alterar: ");
+		fflush(stdin);
+		gets(AlunoAux.nome);
+		
+		int Busca = BuscaAluno(AlunoAux.nome, arq);
+			
+		if(Busca != -1){
+			
+			printf("\nDeseja alterar qual informacao?");
+			printf("\n[A] para Curso");
+			printf("\n[B] para Data de Nascimento");
+			printf("\n[C] para Rua");
+			printf("\n[D] para Bairro");
+			printf("\n[E] para Cidade");
+			printf("\n[F] para Estado\n");
+			printf("\nOpcao: ");
+			op = toupper(getche());
+			
+			fseek(arq, Busca, 0);
+			fread(&AlunoAux, sizeof(TpAluno), 1, arq);
+			
+			switch(op){
+				
+				case 'A':
+					printf("\nDigite o novo Curso: ");
+					fflush(stdin);
+					gets(AlunoAux.curso);
+					break;
+				
+				case 'B':
+					printf("\nDigite a nova Data de Nascimento: ");
+					scanf("%d %d %d", &AlunoAux.data.d, &AlunoAux.data.m, &AlunoAux.data.a);
+					break;
+				
+				case 'C':
+					printf("\nDigite o endereco da Rua: ");
+					fflush(stdin);
+					gets(AlunoAux.rua);
+					break;
+				
+				case 'D':
+					printf("\nDigite o endereco do Bairro: ");
+					fflush(stdin);
+					gets(AlunoAux.bairro);
+					break;
+				
+				case 'E':
+					printf("\nDigite a nova Cidade: ");
+					fflush(stdin);
+					gets(AlunoAux.cidade);
+					break;
+				
+				case 'F':
+					printf("\nDigite o novo Estado(XX): ");
+					fflush(stdin);
+					gets(AlunoAux.estado);		
+			}
+			
+			fseek(arq, Busca, 0);
+			fwrite(&AlunoAux, sizeof(TpAluno), 1, arq);
+			printf("\nAlteracao realizada com sucesso!");
+		}
+		
+		else
+			printf("\nAluno nao encontrado!");
+	}
+	
 	fclose(arq);
 	getch();
 }
