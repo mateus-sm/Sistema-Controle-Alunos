@@ -53,7 +53,9 @@ int main(void) {
 			break;
 
 			case 'C':
-				printf("* * * ALUNOS * * *\n");
+				limparTitulo();
+				gotoxy(32, 7);
+				printf("* * * ALUNOS * * *");
 				ExibirAlunos(DescAluno);
 				getch();
 			break;
@@ -68,10 +70,8 @@ int main(void) {
 
 			case 'F':
 				limparTitulo();
-				gotoxy(32, 7);
-				printf("* * * DISCIPLINAS * * *");
-				ExibirDisciplina(DescDisci);
-				getch();
+				limparQuadro();
+				ExibirDisciplina();
 			break;
 
 			default:
@@ -95,7 +95,7 @@ void GravarDisciplina(TpDescritorDisciplina &D) {
 	} else {
 		limparTitulo();
 		gotoxy(27, 7);
-		printf("* * * Cadastrar Disciplinas * * *\n");
+		printf("* * * CADASTRAR DISCIPLINAS * * *\n");
 		gotoxy(l, c);
 		printf("Digite o nome da disciplina: ");
 		fflush(stdin);

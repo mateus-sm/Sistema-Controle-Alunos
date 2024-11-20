@@ -75,8 +75,10 @@ void InserirAlunoOrdenado(TpDescritorAluno &D) {
 	
 	FILE *arq = fopen("Aluno.dat", "rb");
 
-	if (arq == NULL) 
+	if (arq == NULL) {
+		gotoxy(30, 10);
 		printf("Nao existem alunos no arquivo para serem inseridos na lista!");
+	}
 	
 	else {
 
@@ -117,6 +119,7 @@ void InserirAlunoOrdenado(TpDescritorAluno &D) {
 
 			fread(&AlunoAux, sizeof(TpAluno), 1, arq);
 		}
+		gotoxy(18, 10);
 		printf("Arquivo lido e dados inseridos na lista com sucesso!");
 	}
 
@@ -208,14 +211,21 @@ void InserirOrdenadoDisciplina(TpDescritorDisciplina &D) {
 	getch();
 }
 
-void ExibirDisciplina(TpDescritorDisciplina D) {
-	
-    if (D.qtde != 0) {
-        printf("Disciplina: %s\n", D.inicio -> disci);
+void ExibirDisciplina() {
 
-        D.inicio = D.inicio -> prox;
-		D.qtde--;
-		
-		ExibirDisciplina(D);
+	int c = 30, l = 10;
+	TpDisci DisciAux;
+	FILE *arq = fopen("Disciplinas.dat", "rb");
+
+	gotoxy(32, 7);
+	printf("* * * DISCIPLINAS * * *");
+	
+	fread(&DisciAux, sizeof(TpDisci), 1, arq);
+    while (!feof(arq)){
+		gotoxy(c, l++);
+		printf("Disciplina: %s", DisciAux.disci);
+		fread(&DisciAux, sizeof(TpDisci), 1, arq);
     }
+
+	getch();
 }
