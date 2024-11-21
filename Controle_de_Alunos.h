@@ -83,6 +83,17 @@ int BuscaDisciplina(TpDisci Disciplina){
 	return -1;
 }
 
+void ExcluirListaAlunos(TpDescritorAluno &D){
+	
+	if(D.qtde != 0){
+		TpAluno *aux = D.inicio;
+		D.inicio = D.inicio -> prox;
+		delete aux;
+		D.qtde--;
+		ExcluirListaAlunos(D);
+	}
+}
+
 void InserirAlunoOrdenado(TpDescritorAluno &D) {
 	
 	TpAluno *No, *ant, *atual, AlunoAux;
@@ -95,6 +106,8 @@ void InserirAlunoOrdenado(TpDescritorAluno &D) {
 	}
 	
 	else {
+		
+		ExcluirListaAlunos(D);
 
 		fread(&AlunoAux, sizeof(TpAluno), 1, arq);
 
