@@ -239,6 +239,8 @@ void AlterarInfoAlunos(void){
 }
 
 void ExibirAluno(TpDescritorAluno D) {
+	int i = 18;
+
 	gotoxy(32, 10); printf("Informacoes %s: ", D.inicio -> nome);
 	gotoxy(32, 11); printf("Ano de Nasc: %d/%d/%d", D.inicio -> data.d, D.inicio -> data.m, D.inicio -> data.a);
 	gotoxy(32, 12); printf("Curso: %s", D.inicio -> curso);
@@ -246,6 +248,17 @@ void ExibirAluno(TpDescritorAluno D) {
 	gotoxy(32, 14); printf("Bairro: %s", D.inicio -> bairro);
 	gotoxy(32, 15); printf("Cidade: %s", D.inicio -> cidade);
 	gotoxy(32, 16); printf("Estado: %s", D.inicio -> estado);
+
+	if (D.inicio->disciplina != NULL) {
+		while (D.inicio->disciplina != NULL) {
+			gotoxy(32, i); printf("Disciplina: %s", D.inicio->disciplina); i++;
+			gotoxy(32, i); printf("Nota 1: %s", D.inicio->disciplina->nota1); i++;
+			gotoxy(32, i); printf("Nota 2: %s", D.inicio->disciplina->nota2); i++;
+			gotoxy(32, i); printf("Frequencia: %s", D.inicio->disciplina->freq); i++;
+			D.inicio->disciplina = D.inicio->disciplina->prox;
+			i++;
+		}
+	}
 }
 
 void ExibirAlunos(TpDescritorAluno D) {
@@ -332,7 +345,11 @@ void InserirOrdenadoDisciplina(TpDescritorDisciplina &D) {
 	getch();
 }
 
-void ExibirDisciplina() {
+void ExibirDisciplina(TpDescritorDisciplina D) {
+	gotoxy(32, 10); printf("Disciplina: %s", D.inicio->disci);
+}
+
+void ExibirDisciplinas() {
 
 	int c = 30, l = 10;
 	TpDisci DisciAux;

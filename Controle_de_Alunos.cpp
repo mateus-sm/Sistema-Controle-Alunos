@@ -14,7 +14,9 @@ void moldura(int colunai, int linhai, int colunaf, int linhaf, int frente, int f
 void moldeMenuInicial(void);
 char menuNum(void);
 void clear();
-TpAluno PercorrerLista(TpDescritorAluno D);
+TpAluno PercorrerListaAluno(TpDescritorAluno D);
+TpDisci PercorrerListaDisciplina(TpDescritorDisciplina D);
+void ConectarDisciplina(TpDescritorAluno &D, TpAluno Aluno, TpDisci Disciplina);
 
 char menu(){
 	
@@ -35,6 +37,7 @@ char menu(){
 int main(void) {
 	TpAluno *A = NULL;
 	TpAluno Aluno;
+	TpDisci Disciplina;
 	TpDescritorAluno DescAluno;
 	TpDescritorDisciplina DescDisci;
 	char op;
@@ -74,7 +77,7 @@ int main(void) {
 			case 'F':
 				limparTitulo();
 				limparQuadro();
-				ExibirDisciplina();
+				ExibirDisciplinas();
 			break;
 			
 			case 'G':
@@ -82,7 +85,9 @@ int main(void) {
 			break;
 
 			case 'H':
-				Aluno = PercorrerLista(DescAluno);
+				Aluno = PercorrerListaAluno(DescAluno);
+				Disciplina = PercorrerListaDisciplina(DescDisci);
+				ConectarDisciplina(DescAluno, Aluno, Disciplina);
 			break;
 
 			default:
@@ -105,7 +110,29 @@ void clear(void) {
     gotoxy(1, 1);
 }
 
-TpAluno PercorrerLista(TpDescritorAluno D) {
+void ConectarDisciplina(TpDescritorAluno &D, TpAluno Aluno, TpDisci Disciplina) {
+	TpDisci *No = NovoNoDisciplina(Disciplina);
+	TpDescritorAluno aux = D;
+
+	//Loop para chegar no aluno que vai receber a disciplina
+	while (strcmp(D.inicio->nome, Aluno.nome) != 0) {
+		D.inicio = D.inicio->prox;
+	}
+
+	//Logica para adicionar a disciplina
+	if (D.inicio->disciplina == NULL) {
+		D.inicio->disciplina = No;
+	} 
+	// else {
+	// 	while (aux.inicio->disciplina->prox != NULL) {
+	// 		aux.inicio->disciplina = aux.inicio->disciplina->prox;
+	// 	}
+
+	// 	aux.inicio->disciplina->prox = No;
+	// }
+}
+
+TpAluno PercorrerListaAluno(TpDescritorAluno D) {
 	char tecla;
 	TpAluno AlunoAux;
 	FILE *arq = fopen("aluno.dat", "rb");
@@ -142,7 +169,46 @@ TpAluno PercorrerLista(TpDescritorAluno D) {
 		}
 	} while(tecla != 27);
 
+	fclose(arq);
 	return AlunoAux;
+}
+
+TpDisci PercorrerListaDisciplina(TpDescritorDisciplina D) {
+	char nomeDisci[30];
+	TpDisci DisciplinaAux;
+	FILE *arq = fopen("Disciplinas.dat", "rb");
+
+	limparQuadro();
+	gotoxy(30, 9); printf("Disciplinas disponiveis:");
+	ExibirDisciplinas();
+
+	limparQuadro();
+	gotoxy(20, 9); printf("Digite o nome da disciplina que quer inserir: ");
+	gets(nomeDisci);
+
+	while(strcmp(D.inicio->disci, nomeDisci) != 0) {
+		D.inicio = D.inicio->prox;
+	}
+
+	fseek(arq, 0, 0);
+	fread(&DisciplinaAux, sizeof(TpDisci), 1, arq);
+	while(!feof(arq) && stricmp(DisciplinaAux.disci, D.inicio->disci) != 0)
+		fread(&DisciplinaAux, sizeof(TpDisci), 1, arq);
+
+	gotoxy(25, 10); printf("Disciplina selecionada: %s", DisciplinaAux.disci); getch();
+
+	limparQuadro();
+	gotoxy(32, 10); printf("Digite a nota1: ");
+	scanf("%f", &DisciplinaAux.nota1);
+	limparQuadro();
+	gotoxy(32, 10); printf("Digite a nota2: ");
+	scanf("%f", &DisciplinaAux.nota2);
+	limparQuadro();
+	gotoxy(32, 10); printf("Digite a frequencia: ");
+	scanf("%f", &DisciplinaAux.freq);
+
+	fclose(arq);
+	return DisciplinaAux;
 }
 
 void GravarDisciplina(TpDescritorDisciplina &D) {
