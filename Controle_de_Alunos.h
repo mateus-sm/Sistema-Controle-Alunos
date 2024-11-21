@@ -67,7 +67,7 @@ int BuscaAluno(char nome[TF], FILE *arq){
 	return -1;
 }
 
-int BuscaDisciplina(TpDisci Disciplina){
+int BuscaDisciplina(TpDisci Disciplina) {
 	
 	FILE *arq = fopen("Disciplinas.dat", "rb");
 	
@@ -77,6 +77,8 @@ int BuscaDisciplina(TpDisci Disciplina){
 	while(!feof(arq) && stricmp(aux.disci, Disciplina.disci) != 0)
 		fread(&aux, sizeof(TpDisci), 1, arq);
 	
+	fclose(arq);
+
 	if(!feof(arq))
 		return ftell(arq) - sizeof(TpAluno);
 	
@@ -146,8 +148,7 @@ void InserirAlunoOrdenado(TpDescritorAluno &D) {
 
 			fread(&AlunoAux, sizeof(TpAluno), 1, arq);
 		}
-		gotoxy(18, 10);
-		printf("Arquivo lido e dados inseridos na lista com sucesso!");
+		gotoxy(17, 10); printf("Arquivo lido e dados inseridos na lista com sucesso!");
 	}
 
 	fclose(arq);
@@ -156,7 +157,7 @@ void InserirAlunoOrdenado(TpDescritorAluno &D) {
 
 void AlterarInfoAlunos(void){
 	
-	system("cls");
+	//system("cls");
 	
 	FILE *arq = fopen("Aluno.dat", "rb+");
 	
@@ -251,10 +252,10 @@ void ExibirAluno(TpDescritorAluno D) {
 
 	if (D.inicio->disciplina != NULL) {
 		while (D.inicio->disciplina != NULL) {
-			gotoxy(32, i); printf("Disciplina: %s", D.inicio->disciplina); i++;
-			gotoxy(32, i); printf("Nota 1: %s", D.inicio->disciplina->nota1); i++;
-			gotoxy(32, i); printf("Nota 2: %s", D.inicio->disciplina->nota2); i++;
-			gotoxy(32, i); printf("Frequencia: %s", D.inicio->disciplina->freq); i++;
+			gotoxy(32, i++); printf("Disciplina: %s", D.inicio->disciplina);
+			gotoxy(32, i++); printf("Nota 1: %s", D.inicio->disciplina->nota1);
+			gotoxy(32, i++); printf("Nota 2: %s", D.inicio->disciplina->nota2);
+			gotoxy(32, i++); printf("Frequencia: %s", D.inicio->disciplina->freq);
 			D.inicio->disciplina = D.inicio->disciplina->prox;
 			i++;
 		}
@@ -338,7 +339,7 @@ void InserirOrdenadoDisciplina(TpDescritorDisciplina &D) {
 			fread(&DisciAux, sizeof(TpDisci), 1, arq);
 		}
 
-		printf("Arquivo lido e dados inseridos na lista com sucesso!");
+		gotoxy(17, 10); printf("Arquivo lido e dados inseridos na lista com sucesso!");
 	}
 
 	fclose(arq);
@@ -347,23 +348,4 @@ void InserirOrdenadoDisciplina(TpDescritorDisciplina &D) {
 
 void ExibirDisciplina(TpDescritorDisciplina D) {
 	gotoxy(32, 10); printf("Disciplina: %s", D.inicio->disci);
-}
-
-void ExibirDisciplinas() {
-
-	int c = 30, l = 10;
-	TpDisci DisciAux;
-	FILE *arq = fopen("Disciplinas.dat", "rb");
-
-	gotoxy(32, 7);
-	printf("* * * DISCIPLINAS * * *");
-	
-	fread(&DisciAux, sizeof(TpDisci), 1, arq);
-    while (!feof(arq)){
-		gotoxy(c, l++);
-		printf("Disciplina: %s", DisciAux.disci);
-		fread(&DisciAux, sizeof(TpDisci), 1, arq);
-    }
-
-	getch();
 }
