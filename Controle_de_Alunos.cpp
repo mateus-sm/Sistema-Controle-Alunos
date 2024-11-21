@@ -13,6 +13,8 @@ void limparTitulo(void);
 void moldura(int colunai, int linhai, int colunaf, int linhaf, int frente, int fundo);
 void moldeMenuInicial(void);
 char menuNum(void);
+void clear();
+TpAluno PercorrerLista(TpDescritorAluno D);
 
 char menu(){
 	
@@ -32,6 +34,7 @@ char menu(){
 
 int main(void) {
 	TpAluno *A = NULL;
+	TpAluno Aluno;
 	TpDescritorAluno DescAluno;
 	TpDescritorDisciplina DescDisci;
 	char op;
@@ -78,6 +81,10 @@ int main(void) {
 				AlterarInfoAlunos();
 			break;
 
+			case 'H':
+				Aluno = PercorrerLista(DescAluno);
+			break;
+
 			default:
 				break;
 		}
@@ -85,6 +92,57 @@ int main(void) {
 	} while (op != 27);
 	
 	return 0;
+}
+
+void clear(void) {
+	textbackground(0);
+    //Limpa 50 linhas
+    gotoxy(1, 1);
+    for (int i = 1; i < 50; i++) {
+        clreol();
+        gotoxy(1, i);
+    }
+    gotoxy(1, 1);
+}
+
+TpAluno PercorrerLista(TpDescritorAluno D) {
+	char tecla;
+	TpAluno AlunoAux;
+	FILE *arq = fopen("aluno.dat", "rb");
+
+	do {
+		limparQuadro();
+		gotoxy(32, 22); printf("Pressione [A] ou [D] para percorrer.");
+		gotoxy(32, 23); printf("Pressione [SPACE] para selecionar.");
+		gotoxy(32, 24); printf("Pressione [ESC] para sair.");
+		ExibirAluno(D);
+		tecla = toupper(getch());
+
+		switch (toupper(tecla)) {
+			case 'A':
+				if (D.inicio->ant != NULL) {
+					D.inicio = D.inicio->ant;
+				}
+			break;
+
+			case 'D':
+				if (D.inicio->prox != NULL) {
+					D.inicio = D.inicio->prox;
+				}
+			break;
+			
+			case 32: 
+				fseek(arq, 0, 0);
+				fread(&AlunoAux, sizeof(TpAluno), 1, arq);
+				while(!feof(arq) && stricmp(AlunoAux.nome, D.inicio->nome) != 0)
+					fread(&AlunoAux, sizeof(TpAluno), 1, arq);
+
+				gotoxy(32, 18); printf("Aluno selecionado: %s", AlunoAux.nome); getch();
+			break;
+		}
+	} while(tecla != 27);
+
+	return AlunoAux;
 }
 
 void GravarDisciplina(TpDescritorDisciplina &D) {
@@ -212,6 +270,7 @@ void limparQuadro(void){
 		printf("                                                               ");
 		c++;
 	}
+	gotoxy(1, 1);
 }
 
 void limparTitulo(void){

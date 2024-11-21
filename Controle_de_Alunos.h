@@ -238,10 +238,20 @@ void AlterarInfoAlunos(void){
 	getch();
 }
 
+void ExibirAluno(TpDescritorAluno D) {
+	gotoxy(32, 10); printf("Informacoes %s: ", D.inicio -> nome);
+	gotoxy(32, 11); printf("Ano de Nasc: %d/%d/%d", D.inicio -> data.d, D.inicio -> data.m, D.inicio -> data.a);
+	gotoxy(32, 12); printf("Curso: %s", D.inicio -> curso);
+	gotoxy(32, 13); printf("Rua: %s", D.inicio -> rua);
+	gotoxy(32, 14); printf("Bairro: %s", D.inicio -> bairro);
+	gotoxy(32, 15); printf("Cidade: %s", D.inicio -> cidade);
+	gotoxy(32, 16); printf("Estado: %s", D.inicio -> estado);
+}
+
 void ExibirAlunos(TpDescritorAluno D) {
 
 	if (D.qtde != 0) {
-		printf("\nInformacoes do %s: \n\n", D.inicio -> nome);
+		printf("\nInformacoes %s: \n\n", D.inicio -> nome);
 		printf("Ano de Nasc: %d/%d/%d\n", D.inicio -> data.d, D.inicio -> data.m, D.inicio -> data.a);
 		printf("Curso: %s\n", D.inicio -> curso);
 		printf("Rua: %s\n", D.inicio -> rua);
