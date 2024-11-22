@@ -105,8 +105,8 @@ void InserirAlunoOrdenado(TpDescritorAluno &D) {
 	FILE *arq = fopen("Aluno.dat", "rb");
 
 	if (arq == NULL) {
-		gotoxy(30, 10);
-		printf("Nao existem alunos no arquivo para serem inseridos na lista!");
+		gotoxy(28, 10);
+		printf("NAO EXISTEM ALUNOS CADASTRADOS!");
 	}
 	
 	else {
@@ -150,9 +150,12 @@ void InserirAlunoOrdenado(TpDescritorAluno &D) {
 
 			fread(&AlunoAux, sizeof(TpAluno), 1, arq);
 		}
-		gotoxy(17, 10); printf("Arquivo lido e dados inseridos na lista com sucesso!");
+		gotoxy(40, 10); printf("SUCESSO");
+		gotoxy(38, 11); printf("ARQUIVO LIDO!");
+		gotoxy(32, 12); printf("DADOS INSERIDOS NA LISTA!");
 	}
 
+	gotoxy(76,25);
 	fclose(arq);
 	getch();
 }
@@ -288,21 +291,75 @@ void ExibirAlunoComDisciplina(TpDescritorAluno D) {
 	}
 }
 
-void ExibirAlunos(TpDescritorAluno D) {
-
+void ExibirAlunos(TpDescritorAluno D, int flag) {
+	
 	if (D.qtde != 0) {
-		printf("\nInformacoes %s: \n\n", D.inicio -> nome);
-		printf("Ano de Nasc: %d/%d/%d\n", D.inicio -> data.d, D.inicio -> data.m, D.inicio -> data.a);
-		printf("Curso: %s\n", D.inicio -> curso);
-		printf("Rua: %s\n", D.inicio -> rua);
-		printf("Bairro: %s\n", D.inicio -> bairro);
-		printf("Cidade: %s\n", D.inicio -> cidade);
-		printf("Estado: %s\n", D.inicio -> estado);
+		for(int i = 9 ; i <= 22; i++){
+			gotoxy(43, i); 
+			printf("|");
+		}
+		int x, y = 10;
+
+		if(flag % 2 == 0)
+			x = 12;
+		else
+			x = 50;
+
+		gotoxy(x, y++);
+		printf("Informacoes: %s", D.inicio -> nome);
+		gotoxy(x, y++);
+		printf("Ano de Nasc: %d/%d/%.4d", D.inicio -> data.d, D.inicio -> data.m, D.inicio -> data.a);
+		gotoxy(x, y++);
+		printf("Curso: %s", D.inicio -> curso);
+		gotoxy(x, y++);
+		printf("Rua: %sn", D.inicio -> rua);
+		gotoxy(x, y++);
+		printf("Bairro: %s", D.inicio -> bairro);
+		gotoxy(x, y++);
+		printf("Cidade: %s", D.inicio -> cidade);
+		gotoxy(x, y++);
+		printf("Estado: %s", D.inicio -> estado);
+		gotoxy(x, y++);
+
+		
 		D.inicio = D.inicio -> prox;
 		D.qtde--;
+		
 
-		ExibirAlunos(D);
+		if(flag % 2 != 0){
+			if(D.qtde != 0){ // NAO ACABOU
+				gotoxy(48, 23);
+				printf("[ENTER] PROXIMA PAGINA");
+				getch();
+				//limparQuadro();
+				int x = 11, y = 9;
+				while(y <= 24){
+					gotoxy(x,y);
+					printf("                                                               ");
+					y++;
+				}
+				ExibirAlunos(D, flag + 1);
+			} else {
+				gotoxy(52, 23);
+				printf("[ENTER] SAIR");
+				getch();
+			}
+		}else{
+			if(D.qtde != 0){
+				ExibirAlunos(D, flag + 1);
+			} else {
+				gotoxy(52, 23);
+				printf("[ENTER] SAIR");
+				getch();
+			}
+		}
+		
+		
+	}else if(D.qtde == 0 && flag == 0){
+		gotoxy(28, 10);
+		printf("NAO EXISTEM ALUNOS CADASTRADOS!");
 	}
+
 }
 
 TpDisci *NovoNoDisciplina(TpDisci Disciplina) {
@@ -324,7 +381,8 @@ void InserirOrdenadoDisciplina(TpDescritorDisciplina &D) {
 	FILE *arq = fopen("Disciplinas.dat", "rb");
 
 	if (arq == NULL) {
-		printf("Arquivo de Disciplinas vazio!");
+		gotoxy(28, 10);
+		printf("NAO EXISTEM DISCIPLINAS CADASTRADAS!");
 	} else {
 		fread(&DisciAux, sizeof(TpDisci), 1, arq);
 
@@ -360,9 +418,12 @@ void InserirOrdenadoDisciplina(TpDescritorDisciplina &D) {
 			fread(&DisciAux, sizeof(TpDisci), 1, arq);
 		}
 
-		gotoxy(17, 10); printf("Arquivo lido e dados inseridos na lista com sucesso!");
+		gotoxy(40, 10); printf("SUCESSO");
+		gotoxy(38, 11); printf("ARQUIVO LIDO!");
+		gotoxy(32, 12); printf("DADOS INSERIDOS NA LISTA!");
 	}
 
+	gotoxy(76,25);
 	fclose(arq);
 	getch();
 }

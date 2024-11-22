@@ -64,10 +64,10 @@ int main(void) {
 
 			case 'C':
 				limparTitulo();
-				gotoxy(32, 7);
+				gotoxy(35, 7);
 				printf("* * * ALUNOS * * *");
-				ExibirAlunos(DescAluno);
-				getch();
+				ExibirAlunos(DescAluno, 0);
+				limparQuadro();
 			break;
 
 			case 'D':
@@ -364,7 +364,7 @@ void GravarDisciplina(TpDescritorDisciplina &D) {
 void GravarAluno() {
 	TpAluno AlunoAux;
 	TpData data;
-	int l = 30, c = 10;
+	int x = 30, y = 10;
 
 	FILE *arq = fopen("Aluno.dat", "ab");
 
@@ -375,52 +375,52 @@ void GravarAluno() {
 		limparTitulo();
 		gotoxy(30, 7);
 		printf("* * * Cadastrar Alunos * * *\n");
-		gotoxy(l,c);
+		gotoxy(x,y++);
 		printf("Digite seu nome: ");
 		fflush(stdin);
-		c++; gotoxy(l, c);
+		gotoxy(x,y++);
 		gets(AlunoAux.nome);
 		
 		while(strcmp(AlunoAux.nome, "") != 0){
-			c++; gotoxy(l, c);
+			gotoxy(x,y++);
 			printf("Digite sua idade (dd/mm/aaaa): ");
-			c++; gotoxy(l, c);
+			gotoxy(x,y++);
 			scanf("%d %d %d", &AlunoAux.data.d, &AlunoAux.data.m, &AlunoAux.data.a);
-			c++; gotoxy(l, c);
+			gotoxy(x,y++);
 			printf("Digite seu curso: ");
 			fflush(stdin);
-			c++; gotoxy(l, c);
+			gotoxy(x,y++);
 			gets(AlunoAux.curso);
-			c++; gotoxy(l, c);
+			gotoxy(x,y++);
 			printf("Digite sua rua: ");
 			fflush(stdin);
-			c++; gotoxy(l, c);
+			gotoxy(x,y++);
 			gets(AlunoAux.rua);
-			c++; gotoxy(l, c);
+			gotoxy(x,y++);
 			printf("Digite seu bairro: ");
 			fflush(stdin);
-			c++; gotoxy(l, c);
+			gotoxy(x,y++);
 			gets(AlunoAux.bairro);
-			c++; gotoxy(l, c);
+			gotoxy(x,y++);
 			printf("Digite sua cidade: ");
 			fflush(stdin);
-			c++; gotoxy(l, c);
+			gotoxy(x,y++);
 			gets(AlunoAux.cidade);
-			c++; gotoxy(l, c);
+			gotoxy(x,y++);
 			printf("Digite seu estado (--): ");
 			fflush(stdin);
-			c++; gotoxy(l, c);
+			gotoxy(x,y++);
 			gets(AlunoAux.estado);
 
 			fwrite(&AlunoAux, sizeof(TpAluno), 1, arq);
 			limparQuadro();
 
 
-			l = 30, c = 10;	
-			gotoxy(l,c);
+			x = 30, y = 10;	
+			gotoxy(x,y++);
 			printf("Digite seu nome: ");
 			fflush(stdin);
-			c++; gotoxy(l, c);
+			gotoxy(x,y++);
 			gets(AlunoAux.nome);
 		}
 		
@@ -434,20 +434,20 @@ void GravarAluno() {
 }
 
 void limparQuadro(void) {
-	int l = 11, c = 9;
+	int x = 11, y = 9;
 	
-	while(c <= 24){
-		gotoxy(l,c);
+	while(y <= 24){
+		gotoxy(x,y);
 		printf("                                                               ");
-		c++;
+		y++;
 	}
-	gotoxy(1, 1);
+	gotoxy(76, 25);
 }
 
 void limparTitulo(void){
 	gotoxy(12,7);
 	printf("                                                              ");
-	gotoxy(76,23);
+	gotoxy(76,25);
 }
 
 void moldura(int colunai, int linhai, int colunaf, int linhaf, int frente, int fundo){
@@ -533,7 +533,7 @@ char menuNum(void) {
 	gotoxy(62,19);
 	printf("Disciplinas");
 
-	gotoxy(76,23);
+	gotoxy(76,25);
 
 	return toupper(getch());
 }
