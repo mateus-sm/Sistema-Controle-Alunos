@@ -20,6 +20,7 @@ void ConectarDisciplina(TpDescritorAluno &D, TpAluno Aluno, TpDisci Disciplina);
 void ExibirDisciplinas();
 void inicializarAluno(TpAluno &A);
 void inicializarDisciplina(TpDisci &D);
+void PercorrerListaAlunoComDisciplina(TpDescritorAluno D);
 
 char menu(){
 	
@@ -91,21 +92,58 @@ int main(void) {
 			case 'H':
 				inicializarAluno(Aluno);
 				Aluno = PercorrerListaAluno(DescAluno);
-
+				
 				inicializarDisciplina(Disciplina);
 				PercorrerListaDisciplina(DescDisci, Disciplina);
 				if (Aluno.curso[0] != '\0' && Disciplina.nota1 != 0.0) {
 					ConectarDisciplina(DescAluno, Aluno, Disciplina);
 				}
 			break;
+			
+			case 'I':
+				PercorrerListaAlunoComDisciplina(DescAluno);
+			break;
 
 			default:
 				break;
 		}
-		
+
 	} while (op != 27);
 	
 	return 0;
+}
+
+void PercorrerListaAlunoComDisciplina(TpDescritorAluno D) {
+	char tecla;
+
+	if (D.inicio == NULL) {
+		gotoxy(18, 10); printf("Lista de alunos vazia!");
+	} else {
+		do {
+			limparQuadro();
+			gotoxy(11, 23); printf("Dicas de navegacao: ");
+			gotoxy(11, 24); printf("[A] ou [D] Percorrer | [ESC] Sair | ");
+			ExibirAlunoComDisciplina(D);
+			tecla = toupper(getch());
+
+			switch (toupper(tecla)) {
+				case 'A':
+					if (D.inicio->ant != NULL) {
+						D.inicio = D.inicio->ant;
+					}
+				break;
+
+				case 'D':
+					if (D.inicio->prox != NULL) {
+						D.inicio = D.inicio->prox;
+					}
+				break;
+
+			}
+		} while(tecla != 27);
+
+	}
+
 }
 
 void inicializarAluno(TpAluno &aluno) {
@@ -129,7 +167,7 @@ void inicializarDisciplina(TpDisci &disciplina) {
     disciplina.nota1 = 0.0;
     disciplina.nota2 = 0.0;
     disciplina.freq = 0.0; 
-    disciplina.prox = NULL;      
+    disciplina.prox = NULL;
 }
 
 void ExibirDisciplinas() {
@@ -165,25 +203,29 @@ void clear(void) {
 }
 
 void ConectarDisciplina(TpDescritorAluno &D, TpAluno Aluno, TpDisci Disciplina) {
+	TpAluno *AlunoAtual = D.inicio;
 	TpDisci *No = NovoNoDisciplina(Disciplina);
-	TpDescritorAluno aux = D;
 
 	//Loop para chegar no aluno que vai receber a disciplina
-	while (strcmp(D.inicio->nome, Aluno.nome) != 0) {
-		D.inicio = D.inicio->prox;
+	while (strcmp(AlunoAtual->nome, Aluno.nome) != 0) {
+		AlunoAtual = AlunoAtual->prox;
 	}
 
 	//Logica para adicionar a disciplina
-	if (D.inicio->disciplina == NULL) {
-		D.inicio->disciplina = No;
-	} 
-	// else {
-	// 	while (aux.inicio->disciplina->prox != NULL) {
-	// 		aux.inicio->disciplina = aux.inicio->disciplina->prox;
-	// 	}
+	if (AlunoAtual->disciplina == NULL) {
+		AlunoAtual->disciplina = No;
+	} else {
+        // Ponteiro auxiliar para percorrer as disciplinas
+        TpDisci *DisciplinaAtual = AlunoAtual->disciplina;
 
-	// 	aux.inicio->disciplina->prox = No;
-	// }
+        // Percorre até a última disciplina
+        while (DisciplinaAtual->prox != NULL) {
+            DisciplinaAtual = DisciplinaAtual->prox;
+        }
+
+        // Conecta a nova disciplina ao final da lista
+        DisciplinaAtual->prox = No;
+	}
 }
 
 TpAluno PercorrerListaAluno(TpDescritorAluno D) {
@@ -196,9 +238,8 @@ TpAluno PercorrerListaAluno(TpDescritorAluno D) {
 	} else {
 		do {
 			limparQuadro();
-			gotoxy(32, 22); printf("Pressione [A] ou [D] para percorrer.");
-			gotoxy(32, 23); printf("Pressione [SPACE] para selecionar.");
-			gotoxy(32, 24); printf("Pressione [ESC] para sair.");
+			gotoxy(11, 23); printf("Dicas de navegacao: ");
+			gotoxy(11, 24); printf("[A] ou [D] Percorrer | [SPACE] Selecionar");
 			ExibirAluno(D);
 			tecla = toupper(getch());
 
@@ -214,7 +255,7 @@ TpAluno PercorrerListaAluno(TpDescritorAluno D) {
 						D.inicio = D.inicio->prox;
 					}
 				break;
-				
+
 				case 32: 
 					fseek(arq, 0, 0);
 					fread(&AlunoAux, sizeof(TpAluno), 1, arq);
@@ -224,7 +265,7 @@ TpAluno PercorrerListaAluno(TpDescritorAluno D) {
 					gotoxy(32, 18); printf("Aluno selecionado: %s", AlunoAux.nome); getch();
 				break;
 			}
-		} while(tecla != 27);
+		} while(tecla != 32);
 
 	}
 
@@ -246,7 +287,7 @@ void PercorrerListaDisciplina(TpDescritorDisciplina D, TpDisci &Disciplina) {
 			limparQuadro();
 			gotoxy(18, 9); printf("Digite o nome da disciplina que quer inserir:");
 			ExibirDisciplinas();
-			gotoxy(64, 9); gets(nomeDisci);
+			gotoxy(64, 9); fflush(stdin); gets(nomeDisci); 
 
 			while(D.inicio != NULL && strcmp(D.inicio->disci, nomeDisci) != 0) {
 				D.inicio = D.inicio->prox;
@@ -287,7 +328,6 @@ void GravarDisciplina(TpDescritorDisciplina &D) {
 		printf("Erro ao abrir arquivo!");
 	} else {
 		limparTitulo();
-		getch();
 		gotoxy(27, 7); printf("* * * CADASTRAR DISCIPLINAS * * *\n");
 		gotoxy(l, c);
 		printf("Digite o nome da disciplina: ");
@@ -300,15 +340,15 @@ void GravarDisciplina(TpDescritorDisciplina &D) {
 		if(BuscaDisciplina(Disciplina) == -1){
 			
 			arq = fopen("Disciplinas.dat", "ab");
-			
+
 			fwrite(&Disciplina, sizeof(TpDisci), 1, arq);
 			limparQuadro();
-			
+
 			gotoxy(30, 12);
 			printf("Dados gravados com sucesso!");
-			
+
 			fclose(arq);
-			
+
 		} else {
 			gotoxy(30, 12);
 			printf("Disciplina ja cadastrada");
@@ -374,7 +414,7 @@ void GravarAluno() {
 
 			fwrite(&AlunoAux, sizeof(TpAluno), 1, arq);
 			limparQuadro();
-			
+
 
 			l = 30, c = 10;	
 			gotoxy(l,c);
@@ -394,7 +434,7 @@ void GravarAluno() {
 }
 
 void limparQuadro(void) {
-	int l = 12, c = 9;
+	int l = 11, c = 9;
 	
 	while(c <= 24){
 		gotoxy(l,c);
@@ -425,7 +465,7 @@ void moldura(int colunai, int linhai, int colunaf, int linhaf, int frente, int f
 	
 	
 	for(int a = colunai + 1; a < colunaf; a++){ 
-		gotoxy(a, linhai); printf("%c", 205); 			
+		gotoxy(a, linhai); printf("%c", 205);
 		gotoxy(a, linhaf); printf("%c", 205);
 	}
 
@@ -438,7 +478,7 @@ void moldura(int colunai, int linhai, int colunaf, int linhaf, int frente, int f
 	//voltar cores de texto e fundo padrão
 	textcolor(7);
 	textbackground(0);
-	
+
 }
 
 void moldeMenuInicial(void){

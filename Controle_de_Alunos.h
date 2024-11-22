@@ -68,19 +68,21 @@ int BuscaAluno(char nome[TF], FILE *arq){
 }
 
 int BuscaDisciplina(TpDisci Disciplina) {
-	
 	FILE *arq = fopen("Disciplinas.dat", "rb");
-	
 	TpDisci aux;
+	int i;
 	
 	fread(&aux, sizeof(TpDisci), 1, arq);
-	while(!feof(arq) && stricmp(aux.disci, Disciplina.disci) != 0)
+	while(!feof(arq) && stricmp(aux.disci, Disciplina.disci) != 0) {
 		fread(&aux, sizeof(TpDisci), 1, arq);
+	}
 	
+	i = ftell(arq) - sizeof(TpAluno);
 	fclose(arq);
 
-	if(!feof(arq))
-		return ftell(arq) - sizeof(TpAluno);
+	if(stricmp(aux.disci, Disciplina.disci) == 0) {
+		return i;
+	}
 	
 	return -1;
 }
@@ -249,15 +251,39 @@ void ExibirAluno(TpDescritorAluno D) {
 	gotoxy(32, 14); printf("Bairro: %s", D.inicio -> bairro);
 	gotoxy(32, 15); printf("Cidade: %s", D.inicio -> cidade);
 	gotoxy(32, 16); printf("Estado: %s", D.inicio -> estado);
+}
 
-	if (D.inicio->disciplina != NULL) {
-		while (D.inicio->disciplina != NULL) {
-			gotoxy(32, i++); printf("Disciplina: %s", D.inicio->disciplina);
-			gotoxy(32, i++); printf("Nota 1: %s", D.inicio->disciplina->nota1);
-			gotoxy(32, i++); printf("Nota 2: %s", D.inicio->disciplina->nota2);
-			gotoxy(32, i++); printf("Frequencia: %s", D.inicio->disciplina->freq);
-			D.inicio->disciplina = D.inicio->disciplina->prox;
-			i++;
+void InicializarDescritorDisciplina(TpDescritorDisciplina &D) {
+	D.inicio = D.fim = NULL;
+	D.qtde = 0;
+}
+
+void ExibirAlunoComDisciplina(TpDescritorAluno D) {
+	TpDescritorDisciplina auxD;
+	InicializarDescritorDisciplina(auxD);
+	auxD.inicio = D.inicio->disciplina;
+	int x = 11, y = 18;
+
+	gotoxy(32, 10); printf("Informacoes %s: ", D.inicio -> nome);
+	gotoxy(32, 11); printf("Ano de Nasc: %d/%d/%d", D.inicio -> data.d, D.inicio -> data.m, D.inicio -> data.a);
+	gotoxy(32, 12); printf("Curso: %s", D.inicio -> curso);
+	gotoxy(32, 13); printf("Rua: %s", D.inicio -> rua);
+	gotoxy(32, 14); printf("Bairro: %s", D.inicio -> bairro);
+	gotoxy(32, 15); printf("Cidade: %s", D.inicio -> cidade);
+	gotoxy(32, 16); printf("Estado: %s", D.inicio -> estado);
+
+	if (auxD.inicio != NULL) {
+		while(auxD.inicio != NULL) {
+			gotoxy(x, y++); printf("Disciplina: %s", auxD.inicio->disci);
+			gotoxy(x, y++); printf("Nota 1: %.2f", auxD.inicio->nota1);
+			gotoxy(x, y++); printf("Nota 2: %.2f", auxD.inicio->nota2);
+			gotoxy(x, y++); printf("Frequencia: %.2f", auxD.inicio->freq);
+			auxD.inicio = auxD.inicio->prox;
+			y = 18;
+			x += 24;
+			if (x == 83) {
+				x = 11;
+			}
 		}
 	}
 }
@@ -277,11 +303,6 @@ void ExibirAlunos(TpDescritorAluno D) {
 
 		ExibirAlunos(D);
 	}
-}
-
-void InicializarDescritorDisciplina(TpDescritorDisciplina &D) {
-	D.inicio = D.fim = NULL;
-	D.qtde = 0;
 }
 
 TpDisci *NovoNoDisciplina(TpDisci Disciplina) {
