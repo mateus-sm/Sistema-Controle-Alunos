@@ -46,16 +46,16 @@ int main(void) {
 				limparQuadro();
 
 				switch (op){
-					case 'A':
+					case '1':
 						GravarAluno();
 					break;
-					case 'B':
+					case '2':
 						buscarAluno();
 					break;
-					case 'C':
-						AlterarInfoAlunos();
+					case '3':
+						AlterarInfoAlunos(DescAluno);
 					break;
-					case 'D':
+					case '4':
 						
 					break;
 				}
@@ -79,16 +79,16 @@ int main(void) {
 				limparQuadro();
 
 				switch(op){
-					case 'A':
+					case '1':
 						GravarDisciplina(DescDisci);
 					break;
-					case 'B':
+					case '2':
 						buscarDisciplina();
 					break;
-					case 'C':
-
+					case '3':
+						AlterarNotasAluno(DescAluno);
 					break;
-					case 'D':	
+					case '4':	
 					
 					break;
 
@@ -553,22 +553,22 @@ char menuAlunos(void){
 	moldeMenuAlunos();
 
 	gotoxy(19,11);
-	printf("[A] Cadastrar");
+	printf("[1] Cadastrar");
 	gotoxy(23,12);
 	printf("Alunos");
 
 	gotoxy(50,11);
-	printf("[B] Buscar");
+	printf("[2] Buscar");
 	gotoxy(54,12);
 	printf("Alunos");
 
 	gotoxy(19,18);
-	printf("[C] Alterar");
+	printf("[3] Alterar");
 	gotoxy(23, 19);
 	printf("Alunos");
 	
 	gotoxy(50,18);
-	printf("[D] Excluir");
+	printf("[4] Excluir");
 	gotoxy(54,19);
 	printf("Alunos");
 
@@ -585,22 +585,22 @@ char menuDisciplina(void){
 	moldeMenuAlunos();
 
 	gotoxy(19,11);
-	printf("[A] Cadastrar");
+	printf("[1] Cadastrar");
 	gotoxy(23,12);
 	printf("Discplinas");
 
 	gotoxy(50,11);
-	printf("[B] Buscar");
+	printf("[2] Buscar");
 	gotoxy(54,12);
 	printf("Discplinas");
 
 	gotoxy(19,18);
-	printf("[C] Alterar");
+	printf("[3] Alterar");
 	gotoxy(23, 19);
 	printf("Discplinas");
 	
 	gotoxy(50,18);
-	printf("[D] Excluir");
+	printf("[4] Excluir");
 	gotoxy(54,19);
 	printf("Discplinas");
 

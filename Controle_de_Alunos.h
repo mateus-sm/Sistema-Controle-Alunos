@@ -161,49 +161,36 @@ void InserirAlunoOrdenado(TpDescritorAluno &D) {
 	getch();
 }
 
-void AlterarInfoAlunos(void){
+void AlterarInfoAlunos(TpDescritorAluno &D){
 	
 	//system("cls");
 	
-	FILE *arq = fopen("Aluno.dat", "rb+");
-	
-	TpAluno AlunoAux;
-	char op;
+	TpAluno *AlunoAux;
+	char op, nome[TF];
 	int x = 30, y = 10;
 
 	gotoxy(30, 7);
 	printf("* * * Alterar Alunos * * *");
 
-	if(arq == NULL){
+	if(D.qtde == 0){
 		gotoxy(30, 10);
-		printf("Sem alunos no arquivo para realizar alteracoes!");
+		printf("Sem alunos na lista para realizar alteracoes!");
 	}else {
 		gotoxy(x, y++);
 		printf("Insira o nome do aluno: ");
 		fflush(stdin);
 		gotoxy(x, y++);
-		gets(AlunoAux.nome);
-		
-		int Busca = BuscaAluno(AlunoAux.nome, arq);
+		gets(nome);
 
-		while(Busca == -1 && strcmp(AlunoAux.nome, "\0") != 0){
-			x = 30, y = 10;
-			limparQuadro();
-			gotoxy(x, y++);
-			printf("Aluno nao encontrado!");
-			gotoxy(x, y++);
-			printf("Insira outro nome:");
-			gotoxy(x, y);
-			fflush(stdin);
-			gets(AlunoAux.nome);
-			Busca = BuscaAluno(AlunoAux.nome, arq);
-		}
+		AlunoAux = D.inicio;
+		while(AlunoAux != NULL && stricmp(AlunoAux -> nome, nome) != 0)
+			AlunoAux = AlunoAux -> prox;
 
-		if(Busca != -1){
+		if(AlunoAux != NULL){
 			x = 30, y =10;
 			limparQuadro();
 			gotoxy(x, y++);
-			printf("Aluno encontrado: %s", AlunoAux.nome);
+			printf("Aluno encontrado: %s", AlunoAux -> nome);
 			gotoxy(x, y++);
 			printf("Deseja alterar qual informacao?");
 			gotoxy(x, y++);
@@ -222,8 +209,6 @@ void AlterarInfoAlunos(void){
 			printf("Opcao: ");
 			op = toupper(getch());
 			
-			fseek(arq, Busca, 0);
-			fread(&AlunoAux, sizeof(TpAluno), 1, arq);
 			limparQuadro();
 			x = 30, y = 10;
 			switch(op){
@@ -233,14 +218,14 @@ void AlterarInfoAlunos(void){
 					printf("Digite o novo Curso: ");
 					fflush(stdin);
 					gotoxy(x, y);
-					gets(AlunoAux.curso);
+					gets(AlunoAux -> curso);
 					break;
 				
 				case 'B':
 					gotoxy(x, y++);
 					printf("Digite a nova Data de Nascimento: ");
 					gotoxy(x, y);
-					scanf("%d %d %d", &AlunoAux.data.d, &AlunoAux.data.m, &AlunoAux.data.a);
+					scanf("%d %d %d", &AlunoAux -> data.d, &AlunoAux -> data.m, &AlunoAux -> data.a);
 					break;
 				
 				case 'C':
@@ -248,7 +233,7 @@ void AlterarInfoAlunos(void){
 					printf("Digite o endereco da Rua: ");
 					fflush(stdin);
 					gotoxy(x, y);
-					gets(AlunoAux.rua);
+					gets(AlunoAux -> rua);
 					break;
 				
 				case 'D':
@@ -256,7 +241,7 @@ void AlterarInfoAlunos(void){
 					printf("Digite o endereco do Bairro: ");
 					fflush(stdin);
 					gotoxy(x, y);
-					gets(AlunoAux.bairro);
+					gets(AlunoAux -> bairro);
 					break;
 				
 				case 'E':
@@ -264,7 +249,7 @@ void AlterarInfoAlunos(void){
 					printf("Digite a nova Cidade: ");
 					fflush(stdin);
 					gotoxy(x, y);
-					gets(AlunoAux.cidade);
+					gets(AlunoAux -> cidade);
 					break;
 				
 				case 'F':
@@ -272,20 +257,134 @@ void AlterarInfoAlunos(void){
 					printf("Digite o novo Estado (--): ");
 					fflush(stdin);
 					gotoxy(x, y);
-					gets(AlunoAux.estado);		
+					gets(AlunoAux -> estado);		
 			}
 			
-			fseek(arq, Busca, 0);
-			fwrite(&AlunoAux, sizeof(TpAluno), 1, arq);
 			limparQuadro();
 			gotoxy(25, 10);
 			printf("Alteracao realizada com sucesso!");
-			getch();
 		}
-		
 	}
 	
-	fclose(arq);
+	getch();
+}
+
+void AlterarNotasAluno(TpDescritorAluno &D){
+	
+	char nome[TF], disci[TF];
+	char op;
+	TpAluno *aux;
+	TpDisci *auxDisci;
+	int x = 25, y = 10;
+	
+	gotoxy(23, 7);
+	printf("* * Alterar informacoes da disciplina * *");
+	
+	if(D.qtde == 0){
+		gotoxy(30, 10);
+		printf("Sem alunos cadastrados!");
+	}	
+	
+	else{
+		gotoxy(x, y++);
+		printf("Digite o aluno para alterar as notas: ");
+		fflush(stdin);
+		gotoxy(x, y++);
+		gets(nome);
+		
+		aux = D.inicio;
+		while(aux != NULL && stricmp(aux -> nome, nome) != 0)
+			aux = aux -> prox;
+			
+		if(aux != NULL){
+			x = 30, y = 10;
+			limparQuadro();
+			
+			if(aux -> disciplina == NULL){
+				gotoxy(x, y++);
+				printf("Aluno sem disciplinas cadastradas!");
+			}
+			
+			else{
+				
+				auxDisci = aux -> disciplina;
+				while(auxDisci != NULL){
+					gotoxy(x, y++);
+					printf("Disciplina: %s", auxDisci -> disci);
+					gotoxy(x, y++);
+					printf("Nota 1: %.2f", auxDisci -> nota1);
+					gotoxy(x, y++);
+					printf("Nota 2: %.2f", auxDisci -> nota2);
+					gotoxy(x, y++);
+					printf("Frequencia: %.2f", auxDisci -> freq);
+					auxDisci = auxDisci -> prox;
+				}
+				
+				y++; gotoxy(x, y++);
+				printf("Deseja alterar qual disciplina?: ");
+				fflush(stdin);
+				gotoxy(x, y++);
+				gets(disci);
+				
+				auxDisci = aux -> disciplina;
+				while(auxDisci != NULL && stricmp(auxDisci -> disci, disci) != 0)
+					auxDisci = auxDisci -> prox;
+				
+				if(auxDisci != NULL){
+					x = 30, y = 10;
+					limparQuadro();
+					
+					gotoxy(x, y++);
+					printf("Deseja alterar:");
+					gotoxy(x, y++);
+					printf("[1] Nota 1");
+					gotoxy(x, y++);
+					printf("[2] Nota 2");
+					gotoxy(x, y++);
+					printf("[3] Frequencia");
+					gotoxy(x, y++);
+					scanf("%c", &op);
+					
+					switch(op){
+						
+						case '1':
+							gotoxy(x, y++);
+							printf("Qual seria a nova nota 1?: ");
+							gotoxy(x, y++);
+							scanf("%f", &aux -> disciplina -> nota1);
+							break;
+							
+						case '2':
+							gotoxy(x, y++);
+							printf("Qual seria a nova nota 2?: ");
+							gotoxy(x, y++);
+							scanf("%f", &aux -> disciplina -> nota2);
+							break;
+							
+						case '3':
+							gotoxy(x, y++);
+							printf("Qual seria a nova frequencia?: ");
+							gotoxy(x, y++);
+							scanf("%f", &aux -> disciplina -> freq);
+							break;
+					}
+					gotoxy(x, y++);
+					printf("Alteracao realizada!");
+				}
+				
+				else{
+					gotoxy(x, y++);
+					printf("Disciplina nao encontrada!");
+				}
+					
+			}
+		}
+		else{
+			gotoxy(x, y++);
+			printf("Aluno nao encontrado!");
+		}
+	}
+	getch();
 }
 
 void ExibirAluno(TpDescritorAluno D) {
@@ -356,7 +455,7 @@ void ExibirAlunos(TpDescritorAluno D, int flag) {
 		gotoxy(x, y++);
 		printf("Curso: %s", D.inicio -> curso);
 		gotoxy(x, y++);
-		printf("Rua: %sn", D.inicio -> rua);
+		printf("Rua: %s", D.inicio -> rua);
 		gotoxy(x, y++);
 		printf("Bairro: %s", D.inicio -> bairro);
 		gotoxy(x, y++);
@@ -562,7 +661,7 @@ void buscarDisciplina(void){
 			limparQuadro();
 			gotoxy(x, y++);
 			printf("Disciplina nao encontrada!");
-			gotoxy(x, y++); y++;
+			y++; gotoxy(x, y++);
 			printf("Insira outra disciplina:");
 			gotoxy(x, y);
 			fflush(stdin);
