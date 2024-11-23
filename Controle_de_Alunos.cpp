@@ -25,24 +25,6 @@ void inicializarAluno(TpAluno &A);
 void inicializarDisciplina(TpDisci &D);
 void PercorrerListaAlunoComDisciplina(TpDescritorAluno D);
 
-/*
-char menu(){
-	
-	clrscr();
-	printf("* * * MENU * * *\n");
-	printf("[A] Cadastrar Aluno no arquivo\n");
-	printf("[B] Ler Alunos cadastrados\n");
-	printf("[C] Exibir Alunos cadastrados\n");
-	printf("[D] Cadastrar Disciplina no arquivo\n");
-	printf("[E] Ler Disciplinas cadastradas\n");
-	printf("[F] Exibir Disciplinas cadastrados\n");
-	printf("[ESC] SAIR\n");
-	printf("Opcao: ");
-
-	return toupper(getche());
-}
-*/
-
 int main(void) {
 	TpAluno *A = NULL;
 	TpAluno Aluno;
@@ -59,7 +41,7 @@ int main(void) {
 		limparQuadro();
 
 		switch (op) {
-			case 'A':
+			case '1':
 				op = menuAlunos();
 				limparQuadro();
 
@@ -80,11 +62,11 @@ int main(void) {
 
 			break;
 
-			case 'B':
+			case '2':
 				InserirAlunoOrdenado(DescAluno);
 			break;
 
-			case 'C':
+			case '3':
 				limparTitulo();
 				gotoxy(35, 7);
 				printf("* * * Alunos * * *");
@@ -92,7 +74,7 @@ int main(void) {
 				limparQuadro();
 			break;
 				
-			case 'D':
+			case '4':
 				op = menuDisciplina();
 				limparQuadro();
 
@@ -101,7 +83,7 @@ int main(void) {
 						GravarDisciplina(DescDisci);
 					break;
 					case 'B':
-
+						buscarDisciplina();
 					break;
 					case 'C':
 
@@ -114,33 +96,34 @@ int main(void) {
 				
 			break;
 
-			case 'E':
+			case '5':
 				InserirOrdenadoDisciplina(DescDisci);
 			break;
 
-			case 'F':
+			case '6':
 				limparTitulo();
 				limparQuadro();
 				ExibirDisciplinas();
 				getch();
 			break;
 			
-			case 'G':
+			case '7':
 				
 			break;
 
-			case 'H':
+			case '8':
 				inicializarAluno(Aluno);
 				Aluno = PercorrerListaAluno(DescAluno);
 				
 				inicializarDisciplina(Disciplina);
 				PercorrerListaDisciplina(DescDisci, Disciplina);
+
 				if (Aluno.curso[0] != '\0' && Disciplina.nota1 != 0.0) {
 					ConectarDisciplina(DescAluno, Aluno, Disciplina);
 				}
 			break;
 			
-			case 'I':
+			case '9':
 				PercorrerListaAlunoComDisciplina(DescAluno);
 			break;
 
@@ -315,7 +298,6 @@ TpAluno PercorrerListaAluno(TpDescritorAluno D) {
 
 void PercorrerListaDisciplina(TpDescritorDisciplina D, TpDisci &Disciplina) {
 	char nomeDisci[30];
-	TpDisci aux;
 	FILE *arq = fopen("Disciplinas.dat", "rb");
 
 	if (arq == NULL) {
@@ -327,23 +309,18 @@ void PercorrerListaDisciplina(TpDescritorDisciplina D, TpDisci &Disciplina) {
 			limparQuadro();
 			gotoxy(18, 9); printf("Digite o nome da disciplina que quer inserir:");
 			ExibirDisciplinas();
-			gotoxy(64, 9); fflush(stdin); gets(nomeDisci); 
+			gotoxy(64, 9); fflush(stdin); gets(nomeDisci);
 
-			while(D.inicio != NULL && strcmp(D.inicio->disci, nomeDisci) != 0) {
+			while(D.inicio != NULL && stricmp(D.inicio->disci, nomeDisci) != 0) {
 				D.inicio = D.inicio->prox;
 			}
 
-			fseek(arq, 0, 0);
-			fread(&aux, sizeof(TpDisci), 1, arq);
-			while(!feof(arq) && stricmp(aux.disci, D.inicio->disci) != 0)
-				fread(&aux, sizeof(TpDisci), 1, arq);
-
-			if (stricmp(aux.disci, D.inicio->disci) != 0) {
+			if(!BuscaDisciplina(Disciplina, arq)) {
 				gotoxy(30, 10); printf("Disciplina nao encontrada!"); getch();
 			} else {
-				gotoxy(30, 10); printf("Disciplina selecionada: %s", aux.disci); getch();
+				gotoxy(30, 10); printf("Disciplina selecionada: %s", nomeDisci); getch();
 
-				strcpy(Disciplina.disci, aux.disci);
+				strcpy(Disciplina.disci, nomeDisci);
 				limparQuadro();
 				gotoxy(32, 10); printf("Digite a nota1: "); scanf("%f", &Disciplina.nota1);
 				limparQuadro();
@@ -361,7 +338,7 @@ void GravarDisciplina(TpDescritorDisciplina &D) {
 	TpDisci Disciplina;
 	int l = 30, c = 10;
 
-	FILE *arq = fopen("Disciplinas.dat", "ab");
+	FILE *arq = fopen("Disciplinas.dat", "ab+");
 
 	if (arq == NULL) {
 		gotoxy(l, c);
@@ -374,12 +351,8 @@ void GravarDisciplina(TpDescritorDisciplina &D) {
 		fflush(stdin);
 		c++; gotoxy(l, c);
 		gets(Disciplina.disci);
-		
-		fclose(arq);
 	
-		if(BuscaDisciplina(Disciplina) == -1){
-			
-			arq = fopen("Disciplinas.dat", "ab");
+		if(BuscaDisciplina(Disciplina, arq) == -1){
 
 			fwrite(&Disciplina, sizeof(TpDisci), 1, arq);
 			limparQuadro();
@@ -387,14 +360,10 @@ void GravarDisciplina(TpDescritorDisciplina &D) {
 			gotoxy(30, 12);
 			printf("Dados gravados com sucesso!");
 
-			fclose(arq);
-
 		} else {
 			gotoxy(30, 12);
 			printf("Disciplina ja cadastrada");
 		}
-		
-		arq = fopen("Disciplinas.dat", "ab");
 	}
 
 	fclose(arq);
@@ -540,37 +509,37 @@ void moldeMenuInicial(void){
 }
 
 char menuNum(void) {
-	clrscr();
+	system("cls");
 	moldeMenuInicial();
 	
 	gotoxy(13,11);
-	printf("[A] Acessar");
+	printf("[1] Acessar");
 	gotoxy(17,12);
 	printf("Alunos");
 	
 
 	gotoxy(35,11);
-	printf("[B] Ler");
+	printf("[2] Ler");
 	gotoxy(39,12);
 	printf("Alunos");
 
 	gotoxy(58,11);
-	printf("[C] Exibir");
+	printf("[3] Exibir");
 	gotoxy(62,12);
 	printf("Alunos");
 
 	gotoxy(13,18);
-	printf("[D] Acessar");
+	printf("[4] Acessar");
 	gotoxy(17,19);
 	printf("Disciplinas");
 
 	gotoxy(35,18);
-	printf("[E] Ler");
+	printf("[5] Ler");
 	gotoxy(39,19);
 	printf("Disciplinas");
 	
 	gotoxy(58,18);
-	printf("[F] Exibir");
+	printf("[6] Exibir");
 	gotoxy(62,19);
 	printf("Disciplinas");
 

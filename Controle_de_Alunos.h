@@ -70,23 +70,21 @@ int BuscaAluno(char nome[TF], FILE *arq){
 	return -1;
 }
 
-int BuscaDisciplina(TpDisci Disciplina) {
-	FILE *arq = fopen("Disciplinas.dat", "rb");
+int BuscaDisciplina(TpDisci Disciplina, FILE *arq) {
+
 	TpDisci aux;
-	int i;
+	fseek(arq, 0, 0);
 	
 	fread(&aux, sizeof(TpDisci), 1, arq);
-	while(!feof(arq) && stricmp(aux.disci, Disciplina.disci) != 0) {
+	while(!feof(arq) && stricmp(aux.disci, Disciplina.disci) != 0){
 		fread(&aux, sizeof(TpDisci), 1, arq);
 	}
-	
-	i = ftell(arq) - sizeof(TpAluno);
-	fclose(arq);
 
-	if(stricmp(aux.disci, Disciplina.disci) == 0) {
-		return i;
+	fseek(arq, -sizeof(TpDisci), 1);
+	if(stricmp(aux.disci, Disciplina.disci) == 0){
+		return ftell(arq) - sizeof(TpAluno);
 	}
-	
+
 	return -1;
 }
 
@@ -537,4 +535,50 @@ void buscarAluno(void){
 
 	}while (strcmp(AlunoAux.nome, "\0") != 0);
 	
+}
+
+void buscarDisciplina(void){
+
+	FILE *ptr = fopen("Disciplinas.dat", "rb+");
+
+	TpDisci DisciAux;
+	char op;
+	int x = 30, y = 10;
+
+	gotoxy(30, 7);
+	printf("* * * Buscar Disciplina * * *");
+
+	do{
+		gotoxy(x, y++);
+		printf("Insira o nome da disciplina: ");
+		fflush(stdin);
+		gotoxy(x, y++);
+		gets(DisciAux.disci);
+		
+		int pos = BuscaDisciplina(DisciAux, ptr);
+
+		while(pos == -1 && strcmp(DisciAux.disci, "\0") != 0){
+			x = 30, y = 10;
+			limparQuadro();
+			gotoxy(x, y++);
+			printf("Disciplina nao encontrada!");
+			gotoxy(x, y++); y++;
+			printf("Insira outra disciplina:");
+			gotoxy(x, y);
+			fflush(stdin);
+			gets(DisciAux.disci);
+			pos = BuscaAluno(DisciAux.disci, ptr);
+		}
+
+		if(pos != -1){
+			fseek(ptr, pos, 0);
+			fread(&DisciAux, sizeof(TpDisci), 1, ptr);
+			
+			x = 30, y =10;
+			limparQuadro();
+			gotoxy(x, y++);
+			printf("Disciplina encontrada: %s", DisciAux.disci); y++;
+		}
+
+	}while (strcmp(DisciAux.disci, "\0") != 0);
 }
