@@ -12,7 +12,10 @@ void limparQuadro(void);
 void limparTitulo(void);
 void moldura(int colunai, int linhai, int colunaf, int linhaf, int frente, int fundo);
 void moldeMenuInicial(void);
+void moldeMenuAlunos(void);
+char menuDisciplina(void);
 char menuNum(void);
+char menuAlunos(void);
 void clear();
 TpAluno PercorrerListaAluno(TpDescritorAluno D);
 void PercorrerListaDisciplina(TpDescritorDisciplina D, TpDisci &disci);
@@ -22,6 +25,7 @@ void inicializarAluno(TpAluno &A);
 void inicializarDisciplina(TpDisci &D);
 void PercorrerListaAlunoComDisciplina(TpDescritorAluno D);
 
+/*
 char menu(){
 	
 	clrscr();
@@ -37,6 +41,7 @@ char menu(){
 
 	return toupper(getche());
 }
+*/
 
 int main(void) {
 	TpAluno *A = NULL;
@@ -55,7 +60,24 @@ int main(void) {
 
 		switch (op) {
 			case 'A':
-				GravarAluno();
+				op = menuAlunos();
+				limparQuadro();
+
+				switch (op){
+					case 'A':
+						GravarAluno();
+					break;
+					case 'B':
+						buscarAluno();
+					break;
+					case 'C':
+						AlterarInfoAlunos();
+					break;
+					case 'D':
+						
+					break;
+				}
+
 			break;
 
 			case 'B':
@@ -65,13 +87,31 @@ int main(void) {
 			case 'C':
 				limparTitulo();
 				gotoxy(35, 7);
-				printf("* * * ALUNOS * * *");
+				printf("* * * Alunos * * *");
 				ExibirAlunos(DescAluno, 0);
 				limparQuadro();
 			break;
-
+				
 			case 'D':
-				GravarDisciplina(DescDisci);
+				op = menuDisciplina();
+				limparQuadro();
+
+				switch(op){
+					case 'A':
+						GravarDisciplina(DescDisci);
+					break;
+					case 'B':
+
+					break;
+					case 'C':
+
+					break;
+					case 'D':	
+					
+					break;
+
+				}
+				
 			break;
 
 			case 'E':
@@ -86,7 +126,7 @@ int main(void) {
 			break;
 			
 			case 'G':
-				AlterarInfoAlunos();
+				
 			break;
 
 			case 'H':
@@ -178,7 +218,7 @@ void ExibirDisciplinas() {
 	if (arq == NULL) {
 		gotoxy(18, 10); printf("Arquivo de disciplinas vazio!");
 	} else {
-		limparTitulo(); gotoxy(32, 7); printf("* * * DISCIPLINAS * * *");
+		limparTitulo(); gotoxy(32, 7); printf("* * * Disciplinas * * *");
 		gotoxy(30, l++); printf("Disciplinas disponiveis:");
 
 		fread(&DisciAux, sizeof(TpDisci), 1, arq);
@@ -328,7 +368,7 @@ void GravarDisciplina(TpDescritorDisciplina &D) {
 		printf("Erro ao abrir arquivo!");
 	} else {
 		limparTitulo();
-		gotoxy(27, 7); printf("* * * CADASTRAR DISCIPLINAS * * *\n");
+		gotoxy(27, 7); printf("* * * Cadastrar Disciplinas * * *");
 		gotoxy(l, c);
 		printf("Digite o nome da disciplina: ");
 		fflush(stdin);
@@ -374,7 +414,7 @@ void GravarAluno() {
 	} else {
 		limparTitulo();
 		gotoxy(30, 7);
-		printf("* * * Cadastrar Alunos * * *\n");
+		printf("* * * Cadastrar Alunos * * *");
 		gotoxy(x,y++);
 		printf("Digite seu nome: ");
 		fflush(stdin);
@@ -383,7 +423,7 @@ void GravarAluno() {
 		
 		while(strcmp(AlunoAux.nome, "") != 0){
 			gotoxy(x,y++);
-			printf("Digite sua idade (dd/mm/aaaa): ");
+			printf("Digite seu Ano de Nasc. (dd/mm/aaaa): ");
 			gotoxy(x,y++);
 			scanf("%d %d %d", &AlunoAux.data.d, &AlunoAux.data.m, &AlunoAux.data.a);
 			gotoxy(x,y++);
@@ -495,7 +535,7 @@ void moldeMenuInicial(void){
 	moldura(34,17,51,21,7,0); //ITEM 5 
 	moldura(57,17,73,21,7,0); //ITEM 6 
 
-	gotoxy(28, 7); printf("* * * Controle de Alunos * * *");
+	gotoxy(30, 7); printf("* * * Controle de Alunos * * *");
 			
 }
 
@@ -504,9 +544,10 @@ char menuNum(void) {
 	moldeMenuInicial();
 	
 	gotoxy(13,11);
-	printf("[A] Cadastrar");
+	printf("[A] Acessar");
 	gotoxy(17,12);
 	printf("Alunos");
+	
 
 	gotoxy(35,11);
 	printf("[B] Ler");
@@ -519,7 +560,7 @@ char menuNum(void) {
 	printf("Alunos");
 
 	gotoxy(13,18);
-	printf("[D] Cadastrar");
+	printf("[D] Acessar");
 	gotoxy(17,19);
 	printf("Disciplinas");
 
@@ -536,4 +577,80 @@ char menuNum(void) {
 	gotoxy(76,25);
 
 	return toupper(getch());
+}
+
+char menuAlunos(void){
+	clrscr();
+	moldeMenuAlunos();
+
+	gotoxy(19,11);
+	printf("[A] Cadastrar");
+	gotoxy(23,12);
+	printf("Alunos");
+
+	gotoxy(50,11);
+	printf("[B] Buscar");
+	gotoxy(54,12);
+	printf("Alunos");
+
+	gotoxy(19,18);
+	printf("[C] Alterar");
+	gotoxy(23, 19);
+	printf("Alunos");
+	
+	gotoxy(50,18);
+	printf("[D] Excluir");
+	gotoxy(54,19);
+	printf("Alunos");
+
+	gotoxy(35, 7); 
+	printf("* * * Alunos * * *");
+
+	gotoxy(76,25);
+
+	return toupper(getch());
+}
+
+char menuDisciplina(void){
+	clrscr();
+	moldeMenuAlunos();
+
+	gotoxy(19,11);
+	printf("[A] Cadastrar");
+	gotoxy(23,12);
+	printf("Discplinas");
+
+	gotoxy(50,11);
+	printf("[B] Buscar");
+	gotoxy(54,12);
+	printf("Discplinas");
+
+	gotoxy(19,18);
+	printf("[C] Alterar");
+	gotoxy(23, 19);
+	printf("Discplinas");
+	
+	gotoxy(50,18);
+	printf("[D] Excluir");
+	gotoxy(54,19);
+	printf("Discplinas");
+
+	gotoxy(33, 7); 
+	printf("* * * Disciplinas * * *");
+
+	gotoxy(76,25);
+
+	return toupper(getch());
+}
+
+void moldeMenuAlunos(void){
+	moldura(10, 5, 75, 25, 7, 2); //borda externa //64
+	moldura(11, 6, 74, 8, 7, 0); //titulo
+
+	moldura(18,10,36,14,7,0); //ITEM 1 
+	moldura(49,10,67,14,7,0); //ITEM 2
+
+	moldura(18,17,36,21,7,0); //ITEM 3 
+	moldura(49,17,67,21,7,0); //ITEM 4  
+
 }
