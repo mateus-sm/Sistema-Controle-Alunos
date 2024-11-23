@@ -437,7 +437,7 @@ void ExibirAlunoComDisciplina(TpDescritorAluno D) {
 void ExibirAlunos(TpDescritorAluno D, int flag) {
 	
 	if (D.qtde != 0) {
-		for(int i = 9 ; i <= 22; i++){
+		for(int i = 9 ; i <= 28; i++){
 			gotoxy(43, i); 
 			printf("|");
 		}
@@ -464,26 +464,18 @@ void ExibirAlunos(TpDescritorAluno D, int flag) {
 		printf("Estado: %s", D.inicio -> estado);
 		gotoxy(x, y++);
 
-		
 		D.inicio = D.inicio -> prox;
 		D.qtde--;
-		
 
 		if(flag % 2 != 0){
 			if(D.qtde != 0){ // NAO ACABOU
-				gotoxy(48, 23);
+				gotoxy(48, 28);
 				printf("[ENTER] PROXIMA PAGINA");
 				getch();
-				//limparQuadro();
-				int x = 11, y = 9;
-				while(y <= 24){
-					gotoxy(x,y);
-					printf("                                                               ");
-					y++;
-				}
+				limparQuadro();
 				ExibirAlunos(D, flag + 1);
 			} else {
-				gotoxy(52, 23);
+				gotoxy(52, 28);
 				printf("[ENTER] SAIR");
 				getch();
 			}
@@ -491,7 +483,7 @@ void ExibirAlunos(TpDescritorAluno D, int flag) {
 			if(D.qtde != 0){
 				ExibirAlunos(D, flag + 1);
 			} else {
-				gotoxy(52, 23);
+				gotoxy(52, 28);
 				printf("[ENTER] SAIR");
 				getch();
 			}
@@ -680,4 +672,68 @@ void buscarDisciplina(void){
 		}
 
 	}while (strcmp(DisciAux.disci, "\0") != 0);
+}
+
+void ExcluirAluno(TpDescritorAluno &D){
+
+	TpAluno *atual;
+	TpDisci *aux;
+	char nome[TF];
+
+	if(D.inicio == NULL){
+		gotoxy(28, 10);
+		printf("NAO EXISTEM ALUNOS CADASTRADOS!");
+	}
+	
+	else{
+
+		gotoxy(19, 11);
+		printf("Digite o nome do aluno que deseja excluir: ");
+		fflush(stdin);
+		gets(nome);
+
+		atual = D.inicio;
+		while(atual != NULL && stricmp(atual -> nome, nome) != 0)
+			atual = atual -> prox;
+
+		if(atual == NULL){
+			gotoxy(32, 13);
+			printf("Aluno nao encontrado!");
+		}
+		
+		else{
+
+			//caso aluno esteja no inicio
+			if(atual -> ant == NULL){
+				D.inicio = atual -> prox;
+				atual -> prox -> ant = NULL;
+			}
+
+			//caso esteja no meio
+			else if(atual -> ant == NULL && atual -> prox == NULL){
+				atual -> ant -> prox = atual -> prox;
+				atual -> prox = atual -> ant;
+			}
+			
+			//caso esteja no final
+			else{
+				D.fim = atual -> ant;
+				atual -> ant -> prox = NULL;
+			}
+
+			//excluindo lista de disciplinas do aluno
+			while(atual -> disciplina != NULL){
+				aux = atual -> disciplina;
+				atual -> disciplina = atual -> disciplina -> prox;
+				delete aux;
+			}
+
+			D.qtde--;
+			delete atual;
+			gotoxy(37, 13);
+			printf("Aluno excluido!");
+		}
+	}
+
+	getch();
 }
