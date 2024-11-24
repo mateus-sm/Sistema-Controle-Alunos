@@ -737,3 +737,149 @@ void ExcluirAluno(TpDescritorAluno &D){
 
 	getch();
 }
+
+void ExcluirNotas(TpDescritorAluno &D){
+	
+	TpAluno *aux;
+	TpDisci *auxAtual, *auxProx;
+	int x = 25, y = 10; char nome[TF], disci[TF];
+	
+	gotoxy(30, 7);
+	printf("* * * Exclusao de Disciplina * * *");
+	
+	if(D.qtde == 0){
+		gotoxy(x, y++);
+		printf("Sem alunos na lista!");
+	}
+	
+	else{
+		gotoxy(x, y++);
+		printf("Deseja excluir a disciplina de qual aluno?: ");
+		gotoxy(x, y++);
+		fflush(stdin);
+		gets(nome);
+		
+		aux = D.inicio;
+		while(aux != NULL && stricmp(aux -> nome, nome) != 0)
+			aux = aux -> prox;
+			
+		if(aux != NULL){
+			gotoxy(x, y++);
+			printf("Deseja excluir qual disciplina?: ");
+			gotoxy(x, y++);
+			gets(disci);
+			
+			//se for a primeira da lista
+			if(stricmp(aux -> disciplina -> disci, disci) == 0){
+				auxAtual = aux -> disciplina;
+				aux -> disciplina = aux -> disciplina -> prox;
+				delete auxAtual;
+				gotoxy(x, y++);
+				printf("Disciplina excluida!");
+			}
+			
+			//se for no meio ou no fim
+			else{
+				auxAtual = aux -> disciplina;
+				auxProx = auxAtual -> prox;
+				while(auxProx != NULL && stricmp(auxProx -> disci, disci) != 0){
+					auxAtual = auxProx;
+					auxProx = auxProx -> prox;
+				}
+					
+				if(auxProx != NULL){
+					auxAtual -> prox = auxProx -> prox;
+					delete auxProx;
+					gotoxy(x, y++);
+					printf("Disciplina excluida!");
+				}
+				
+				else{
+					gotoxy(x, y++);
+					printf("Disciplina nao encontrada!");
+				}
+			}
+		}
+		
+		else{
+			gotoxy(x, y++);
+			printf("Aluno nao encontrado!");
+		}
+	}
+	
+	getch();	
+}
+
+void RelatorioDisciplina(TpDescritorAluno D){
+	
+	int x = 25, y = 10, cont = 0;
+	TpAluno *auxAluno;
+	TpDisci auxDisci, *auxDisci2;
+	
+	FILE *arq = fopen("Disciplinas.dat", "rb+");
+		
+	gotoxy(27, 7);
+	printf("* * * Relatorio de Disciplina * * *");
+	
+	if(D.qtde == 0){
+		gotoxy(x, y++);
+		printf("Sem alunos na lista!");
+	}
+	
+	else{
+		gotoxy(x, y++);
+		printf("Gerar relatorio qual disciplina?: ");
+		fflush(stdin);
+		gets(auxDisci.disci);
+		
+		if(BuscaDisciplina(auxDisci, arq) == -1){
+			gotoxy(x, y++);
+			printf("Disciplina nao encontrada!");
+		}
+		
+		else{
+		
+			auxAluno = D.inicio;
+			
+			while(auxAluno != NULL){
+				
+				auxDisci2 = auxAluno -> disciplina;
+				while(auxDisci2 != NULL){
+					
+					if(stricmp(auxDisci2 -> disci, auxDisci.disci) == 0){
+						y++;gotoxy(x, y++);
+						printf("Aluno: %s", auxAluno -> nome);
+						gotoxy(x, y++);
+						printf("Disciplina: %s", auxDisci.disci);
+						gotoxy(x, y++);
+						printf("Nota 1: %.2f", auxDisci2 -> nota1);
+						gotoxy(x, y++);
+						printf("Nota 2: %.2f", auxDisci2 -> nota2);
+						gotoxy(x, y++);
+						printf("Frequencia: %.2f", auxDisci2 -> freq);
+						cont++;
+					}
+					
+					auxDisci2 = auxDisci2 -> prox;
+				}
+				
+				if(cont == 3){
+					x = 23, y = 12, cont = 0;
+					gotoxy(58, 18);
+					printf("[ENTER] para");
+					gotoxy(58, 19);
+					printf("continuar");
+					getch();
+					limparQuadro();
+					gotoxy(27, 7);
+					printf("* * * Relatorio de Disciplina * * *");
+				}
+				
+				auxAluno = auxAluno -> prox;
+			}
+		}
+	}
+	
+	fclose(arq);
+	getch();
+}

@@ -13,6 +13,7 @@ void limparTitulo(void);
 void moldura(int colunai, int linhai, int colunaf, int linhaf, int frente, int fundo);
 void moldeMenuInicial(void);
 void moldeMenuAlunos(void);
+void moldeMenuDisciplinas(void);
 char menuDisciplina(void);
 char menuNum(void);
 char menuAlunos(void);
@@ -89,7 +90,10 @@ int main(void) {
 						AlterarNotasAluno(DescAluno);
 					break;
 					case '4':
-						
+						ExcluirNotas(DescAluno);
+					break;
+					case '5':
+						RelatorioDisciplina(DescAluno);
 					break;
 				}
 				
@@ -598,27 +602,34 @@ char menuAlunos(void){
 
 char menuDisciplina(void){
 	clrscr();
-	moldeMenuAlunos();
+	moldeMenuDisciplinas();
 
 	gotoxy(19,11);
 	printf("[1] Cadastrar");
 	gotoxy(23,12);
-	printf("Discplinas");
+	printf("Disciplinas");
 
 	gotoxy(50,11);
 	printf("[2] Buscar");
 	gotoxy(54,12);
-	printf("Discplinas");
+	printf("Disciplinas");
 
 	gotoxy(19,18);
 	printf("[3] Alterar");
 	gotoxy(23, 19);
-	printf("Discplinas");
+	printf("Disciplinas");
 	
 	gotoxy(50,18);
 	printf("[4] Excluir");
 	gotoxy(54,19);
-	printf("Discplinas");
+	printf("Disciplinas");
+	
+	gotoxy(35,25);
+	printf("[5] Relatorio");
+	gotoxy(39,26);
+	printf("de uma");
+	gotoxy(39,27);
+	printf("Disciplina");
 
 	gotoxy(33, 7); 
 	printf("* * * Disciplinas * * *");
@@ -636,5 +647,17 @@ void moldeMenuAlunos(void){
 	moldura(49,10,67,14,7,0); //ITEM 2
 
 	moldura(18,17,36,21,7,0); //ITEM 3 
-	moldura(49,17,67,21,7,0); //ITEM 4  
+	moldura(49,17,67,21,7,0); //ITEM 4
+}
+
+void moldeMenuDisciplinas(void){
+	moldura(10, 5, 75, 30, 7, 2); //borda externa //64
+	moldura(11, 6, 74, 8, 7, 0); //titulo
+
+	moldura(18,10,36,14,7,0); //ITEM 1 
+	moldura(49,10,67,14,7,0); //ITEM 2
+
+	moldura(18,17,36,21,7,0); //ITEM 3 
+	moldura(49,17,67,21,7,0); //ITEM 4
+	moldura(34,24,52,28,7,0); //ITEM 5
 }
