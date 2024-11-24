@@ -19,7 +19,7 @@ char menuNum(void);
 char menuAlunos(void);
 void clear();
 TpAluno PercorrerListaAluno(TpDescritorAluno D);
-void PercorrerListaDisciplina(TpDescritorDisciplina D, TpDisci &disci);
+void PercorrerListaDisciplina(TpDescritorAluno DA, TpDescritorDisciplina D, TpDisci &disci);
 void ConectarDisciplina(TpDescritorAluno &D, TpAluno Aluno, TpDisci Disciplina);
 void ExibirDisciplinas();
 void inicializarAluno(TpAluno &A);
@@ -115,7 +115,7 @@ int main(void) {
 				Aluno = PercorrerListaAluno(DescAluno);
 				
 				inicializarDisciplina(Disciplina);
-				PercorrerListaDisciplina(DescDisci, Disciplina);
+				PercorrerListaDisciplina(DescAluno, DescDisci, Disciplina);
 
 				if (Aluno.curso[0] != '\0' && Disciplina.nota1 != 0.0) {
 					ConectarDisciplina(DescAluno, Aluno, Disciplina);
@@ -205,7 +205,7 @@ void ExibirDisciplinas() {
 		gotoxy(18, 10); printf("Arquivo de disciplinas vazio!");
 	} else {
 		limparTitulo(); gotoxy(32, 7); printf("* * * Disciplinas * * *");
-		gotoxy(30, l++); printf("Disciplinas disponiveis:");
+		gotoxy(30, l++); printf("Disciplinas disponiveis:"); l++;
 
 		fread(&DisciAux, sizeof(TpDisci), 1, arq);
 		while (!feof(arq)) {
@@ -217,17 +217,6 @@ void ExibirDisciplinas() {
 	fclose(arq);
 }
 
-void clear(void) {
-	textbackground(0);
-    //Limpa 50 linhas
-    gotoxy(1, 1);
-    for (int i = 1; i < 50; i++) {
-        clreol();
-        gotoxy(1, i);
-    }
-    gotoxy(1, 1);
-}
-
 void ConectarDisciplina(TpDescritorAluno &D, TpAluno Aluno, TpDisci Disciplina) {
 	TpAluno *AlunoAtual = D.inicio;
 	TpDisci *No = NovoNoDisciplina(Disciplina);
@@ -236,21 +225,21 @@ void ConectarDisciplina(TpDescritorAluno &D, TpAluno Aluno, TpDisci Disciplina) 
 	while (strcmp(AlunoAtual->nome, Aluno.nome) != 0) {
 		AlunoAtual = AlunoAtual->prox;
 	}
-
+	
 	//Logica para adicionar a disciplina
 	if (AlunoAtual->disciplina == NULL) {
 		AlunoAtual->disciplina = No;
 	} else {
-        // Ponteiro auxiliar para percorrer as disciplinas
-        TpDisci *DisciplinaAtual = AlunoAtual->disciplina;
+		// Ponteiro auxiliar para percorrer as disciplinas
+		TpDisci *DisciplinaAtual = AlunoAtual->disciplina;
 
-        // Percorre até a última disciplina
-        while (DisciplinaAtual->prox != NULL) {
-            DisciplinaAtual = DisciplinaAtual->prox;
-        }
+		// Percorre até a última disciplina
+		while (DisciplinaAtual->prox != NULL) {
+			DisciplinaAtual = DisciplinaAtual->prox;
+		}
 
-        // Conecta a nova disciplina ao final da lista
-        DisciplinaAtual->prox = No;
+		// Conecta a nova disciplina ao final da lista
+		DisciplinaAtual->prox = No;
 	}
 }
 
@@ -299,8 +288,10 @@ TpAluno PercorrerListaAluno(TpDescritorAluno D) {
 	return AlunoAux;
 }
 
-void PercorrerListaDisciplina(TpDescritorDisciplina D, TpDisci &Disciplina) {
-	char nomeDisci[30];
+void PercorrerListaDisciplina(TpDescritorAluno DA, TpDescritorDisciplina D, TpDisci &Disciplina) {
+	TpDisci aux;
+	TpDisci *auxExiste;
+
 	FILE *arq = fopen("Disciplinas.dat", "rb");
 
 	if (arq == NULL) {
@@ -312,24 +303,38 @@ void PercorrerListaDisciplina(TpDescritorDisciplina D, TpDisci &Disciplina) {
 			limparQuadro();
 			gotoxy(18, 9); printf("Digite o nome da disciplina que quer inserir:");
 			ExibirDisciplinas();
-			gotoxy(64, 9); fflush(stdin); gets(nomeDisci);
+			gotoxy(64, 9); fflush(stdin); gets(aux.disci);
 
-			while(D.inicio != NULL && stricmp(D.inicio->disci, nomeDisci) != 0) {
-				D.inicio = D.inicio->prox;
+			if(BuscaDisciplina(aux, arq) != -1){
+
+				auxExiste = DA.inicio -> disciplina;
+				while(auxExiste != NULL && stricmp(auxExiste -> disci, aux.disci) != 0)
+					auxExiste = auxExiste -> prox;
+
+				if(auxExiste == NULL){
+
+					gotoxy(30, 10); printf("Disciplina selecionada: %s", aux.disci); getch();
+
+					strcpy(Disciplina.disci, aux.disci);
+					limparQuadro();
+					gotoxy(32, 10); printf("Digite a nota1: "); scanf("%f", &Disciplina.nota1);
+					limparQuadro();
+					gotoxy(32, 10); printf("Digite a nota2: "); scanf("%f", &Disciplina.nota2);
+					limparQuadro();
+					gotoxy(32, 10); printf("Digite a frequencia: "); scanf("%f", &Disciplina.freq);
+				}
+
+				else{
+					gotoxy(30, 10);
+					printf("DISCIPLINA JA CADASTRADA!");
+					getch();
+				}
 			}
 
-			if(!BuscaDisciplina(Disciplina, arq)) {
-				gotoxy(30, 10); printf("Disciplina nao encontrada!"); getch();
-			} else {
-				gotoxy(30, 10); printf("Disciplina selecionada: %s", nomeDisci); getch();
-
-				strcpy(Disciplina.disci, nomeDisci);
-				limparQuadro();
-				gotoxy(32, 10); printf("Digite a nota1: "); scanf("%f", &Disciplina.nota1);
-				limparQuadro();
-				gotoxy(32, 10); printf("Digite a nota2: "); scanf("%f", &Disciplina.nota2);
-				limparQuadro();
-				gotoxy(32, 10); printf("Digite a frequencia: "); scanf("%f", &Disciplina.freq);
+			else{
+				gotoxy(30, 10);
+				printf("DISCIPLINA NAO ENCONTRADA!");
+				getch();
 			}
 		}
 	}
