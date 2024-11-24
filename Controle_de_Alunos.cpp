@@ -127,7 +127,7 @@ int main(void) {
 			break;
 
 			case '9':
-				
+				RelatorioReprovas(DescAluno);
 			break;
 
 			default:
@@ -511,7 +511,7 @@ void moldeMenuInicial(void){
 	moldura(34,24,51,28,7,0); //ITEM 8
 	moldura(57,24,73,28,7,0); //ITEM 9
 
-	gotoxy(30, 7); printf("* * * Controle de Alunos * * *");
+	gotoxy(28, 7); printf("* * * Controle de Alunos * * *");
 			
 }
 

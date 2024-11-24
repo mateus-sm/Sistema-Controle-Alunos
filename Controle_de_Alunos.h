@@ -883,3 +883,48 @@ void RelatorioDisciplina(TpDescritorAluno D){
 	fclose(arq);
 	getch();
 }
+
+void RelatorioReprovas(TpDescritorAluno D){
+
+	TpAluno *aux = D.inicio;
+
+	if(aux == NULL){
+		gotoxy(28, 10);
+		printf("NAO EXISTEM ALUNOS CADASTRADOS!");
+	}
+
+	else{
+		FILE *arq = fopen("RelatorioReprova.txt", "w");
+
+		while(aux != NULL){
+
+			fprintf(arq, "%s:\n", aux -> nome);
+
+			if(aux -> disciplina == NULL)
+				fprintf(arq, "Aluno nao possui disciplinas!\n");
+
+			else{
+				while(aux -> disciplina != NULL){
+								
+					if(aux -> disciplina -> nota1 + aux -> disciplina -> nota2 < 12)
+						fprintf(arq, "Reprovado em: %s -> Media final: %.2f\n", aux -> disciplina -> disci, (aux -> disciplina -> nota1 + aux -> disciplina -> nota2) / 2);
+					
+					else
+						fprintf(arq, "Nao ha reprovas!\n");
+					
+					aux -> disciplina = aux -> disciplina -> prox;
+				}
+			}
+
+			fprintf(arq, "\n");
+			aux = aux -> prox;
+		}
+
+		gotoxy(28, 10);
+		printf("DADOS LIDOS E ARQUIVO TXT GERADO!");
+
+		fclose(arq);
+	}
+
+	getch();
+}
