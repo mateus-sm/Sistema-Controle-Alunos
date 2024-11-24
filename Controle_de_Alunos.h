@@ -194,17 +194,17 @@ void AlterarInfoAlunos(TpDescritorAluno &D){
 			gotoxy(x, y++);
 			printf("Deseja alterar qual informacao?");
 			gotoxy(x, y++);
-			printf("[A] para Curso");
+			printf("[A] Curso");
 			gotoxy(x, y++);
-			printf("[B] para Data de Nascimento");
+			printf("[B] Data de Nascimento");
 			gotoxy(x, y++);
-			printf("[C] para Rua");
+			printf("[C] Rua");
 			gotoxy(x, y++);
-			printf("[D] para Bairro");
+			printf("[D] Bairro");
 			gotoxy(x, y++);
-			printf("[E] para Cidade");
+			printf("[E] Cidade");
 			gotoxy(x, y++);
-			printf("[F] para Estado\n");
+			printf("[F] Estado\n");
 			gotoxy(x, y++);
 			printf("Opcao: ");
 			op = toupper(getch());
@@ -425,10 +425,11 @@ void ExibirAlunoComDisciplina(TpDescritorAluno D) {
 			gotoxy(x, y++); printf("Nota 2: %.2f", auxD.inicio->nota2);
 			gotoxy(x, y++); printf("Frequencia: %.2f", auxD.inicio->freq);
 			auxD.inicio = auxD.inicio->prox;
-			y = 18;
-			x += 24;
-			if (x == 83) {
+			y -= 4;
+			x += 22;
+			if (x == 77) {
 				x = 11;
+				y += 5;
 			}
 		}
 	}

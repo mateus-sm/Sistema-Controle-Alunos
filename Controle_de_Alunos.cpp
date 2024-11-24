@@ -111,14 +111,21 @@ int main(void) {
 			break;
 
 			case '7':
-				inicializarAluno(Aluno);
-				Aluno = PercorrerListaAluno(DescAluno);
-				
-				inicializarDisciplina(Disciplina);
-				PercorrerListaDisciplina(DescAluno, DescDisci, Disciplina);
+				if (DescAluno.inicio == NULL || DescDisci.inicio == NULL) {
+					limparQuadro();
+					gotoxy(24, 10); printf("Antes de conectar use itens [2] e [5]");
+					gotoxy(24, 11); printf("para criar as listas de modo logico!!!"); getch();
+				} else {
+					inicializarAluno(Aluno);
+					Aluno = PercorrerListaAluno(DescAluno);
+					
+					inicializarDisciplina(Disciplina);
+					PercorrerListaDisciplina(DescAluno, DescDisci, Disciplina);
 
-				if (Aluno.curso[0] != '\0' && Disciplina.nota1 != 0.0) {
-					ConectarDisciplina(DescAluno, Aluno, Disciplina);
+					//Verifica se as variaveis foram alteradas
+					if (Aluno.curso[0] != '\0' && Disciplina.nota1 != 0.0) {
+						ConectarDisciplina(DescAluno, Aluno, Disciplina);
+					}					
 				}
 			break;
 			
@@ -147,8 +154,8 @@ void PercorrerListaAlunoComDisciplina(TpDescritorAluno D) {
 	} else {
 		do {
 			limparQuadro();
-			gotoxy(11, 23); printf("Dicas de navegacao: ");
-			gotoxy(11, 24); printf("[A] ou [D] Percorrer | [ESC] Sair | ");
+			gotoxy(11, 28); printf("Dicas de navegacao: ");
+			gotoxy(11, 29); printf("[A] ou [D] Percorrer | [ESC] Sair | ");
 			ExibirAlunoComDisciplina(D);
 			tecla = toupper(getch());
 
@@ -253,8 +260,8 @@ TpAluno PercorrerListaAluno(TpDescritorAluno D) {
 	} else {
 		do {
 			limparQuadro();
-			gotoxy(11, 23); printf("Dicas de navegacao: ");
-			gotoxy(11, 24); printf("[A] ou [D] Percorrer | [SPACE] Selecionar");
+			gotoxy(11, 28); printf("Dicas de navegacao: ");
+			gotoxy(11, 29); printf("[A] ou [D] Percorrer | [SPACE] Selecionar");
 			ExibirAluno(D);
 			tecla = toupper(getch());
 
