@@ -563,6 +563,13 @@ char menuNum(void) {
 	gotoxy(39,27);
 	printf("com Aluno");
 
+	gotoxy(58,25);
+	printf("[9] Gerar");
+	gotoxy(62,26);
+	printf("Relatorio");
+	gotoxy(62,27);
+	printf("de Reprovas");
+
 	gotoxy(76,30);
 
 	return toupper(getch());
