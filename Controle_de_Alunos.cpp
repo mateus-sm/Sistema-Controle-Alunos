@@ -6,6 +6,13 @@
 
 #include "Controle_de_Alunos.h"
 
+/*---------> GRUPO <------------
+EDUARDO CARBONARI SILVA
+IGOR CARBONARI SILVA
+KAIKY TREVISAN FERNANDES
+MATEUS SILVA MACIEL   
+<------------------------------>*/
+
 void GravarAluno();
 void GravarDisciplina(TpDescritorDisciplina &DescDisci);
 void limparQuadro(void);
@@ -366,23 +373,25 @@ void GravarDisciplina(TpDescritorDisciplina &D) {
 		fflush(stdin);
 		c++; gotoxy(l, c);
 		gets(Disciplina.disci);
+		
+		if(stricmp(Disciplina.disci, "") != 0){
+			if(BuscaDisciplina(Disciplina, arq) == -1){
 	
-		if(BuscaDisciplina(Disciplina, arq) == -1){
-
-			fwrite(&Disciplina, sizeof(TpDisci), 1, arq);
-			limparQuadro();
-
-			gotoxy(30, 12);
-			printf("Dados gravados com sucesso!");
-
-		} else {
-			gotoxy(30, 12);
-			printf("Disciplina ja cadastrada");
+				fwrite(&Disciplina, sizeof(TpDisci), 1, arq);
+				limparQuadro();
+	
+				gotoxy(30, 12);
+				printf("Dados gravados com sucesso!");
+	
+			} else {
+				gotoxy(30, 12);
+				printf("Disciplina ja cadastrada");
+			}
+			getch();
 		}
 	}
 
 	fclose(arq);
-	getch();
 }
 
 void GravarAluno() {
@@ -410,50 +419,96 @@ void GravarAluno() {
 			printf("Digite seu Ano de Nasc. (dd/mm/aaaa): ");
 			gotoxy(x,y++);
 			scanf("%d %d %d", &AlunoAux.data.d, &AlunoAux.data.m, &AlunoAux.data.a);
-			gotoxy(x,y++);
-			printf("Digite seu curso: ");
-			fflush(stdin);
-			gotoxy(x,y++);
-			gets(AlunoAux.curso);
-			gotoxy(x,y++);
-			printf("Digite sua rua: ");
-			fflush(stdin);
-			gotoxy(x,y++);
-			gets(AlunoAux.rua);
-			gotoxy(x,y++);
-			printf("Digite seu bairro: ");
-			fflush(stdin);
-			gotoxy(x,y++);
-			gets(AlunoAux.bairro);
-			gotoxy(x,y++);
-			printf("Digite sua cidade: ");
-			fflush(stdin);
-			gotoxy(x,y++);
-			gets(AlunoAux.cidade);
-			gotoxy(x,y++);
-			printf("Digite seu estado (--): ");
-			fflush(stdin);
-			gotoxy(x,y++);
-			gets(AlunoAux.estado);
-
-			fwrite(&AlunoAux, sizeof(TpAluno), 1, arq);
-			limparQuadro();
-
+			
+			if((AlunoAux.data.d > 0 &&  AlunoAux.data.d < 32) && (AlunoAux.data.m > 0 &&  AlunoAux.data.m < 13) && (AlunoAux.data.a > 0 &&  AlunoAux.data.a < 2025)){
+				gotoxy(x,y++);
+				printf("Digite seu curso: ");
+				fflush(stdin);
+				gotoxy(x,y++);
+				gets(AlunoAux.curso);
+				
+				if(stricmp(AlunoAux.curso, "") != 0){
+					gotoxy(x,y++);
+					printf("Digite sua rua: ");
+					fflush(stdin);
+					gotoxy(x,y++);
+					gets(AlunoAux.rua);
+					
+					if(stricmp(AlunoAux.rua, "") != 0){
+						gotoxy(x,y++);
+						printf("Digite seu bairro: ");
+						fflush(stdin);
+						gotoxy(x,y++);
+						gets(AlunoAux.bairro);
+						
+						if(stricmp(AlunoAux.bairro, "") != 0){
+							gotoxy(x,y++);
+							printf("Digite sua cidade: ");
+							fflush(stdin);
+							gotoxy(x,y++);
+							gets(AlunoAux.cidade);
+							
+							if(stricmp(AlunoAux.cidade, "") != 0){
+								gotoxy(x,y++);
+								printf("Digite seu estado (--): ");
+								fflush(stdin);
+								gotoxy(x,y++);
+								gets(AlunoAux.estado);
+								
+								if(stricmp(AlunoAux.estado, "") != 0){
+									fwrite(&AlunoAux, sizeof(TpAluno), 1, arq);
+									limparQuadro();
+									gotoxy(30, 10);
+									printf("Dados gravados com sucesso!");
+								}
+								
+								else{
+									gotoxy(x, y++);
+									printf("Estado invalido!");
+								}
+							}
+							
+							else{
+								gotoxy(x, y++);
+								printf("Cidade invalida!");
+							}
+						}
+						
+						else{
+							gotoxy(x, y++);
+							printf("Bairro invalido!");
+						}
+					}
+					
+					else{
+						gotoxy(x, y++);
+						printf("Rua invalida!");
+					}
+				}
+				
+				else{
+					gotoxy(x, y++);
+					printf("Curso invalido!");
+				}
+			}
+			
+			else{
+				gotoxy(x, y++);
+				printf("Data invalida!");
+			}
+			
+			getch();
 
 			x = 30, y = 10;	
+			limparQuadro();
 			gotoxy(x,y++);
 			printf("Digite seu nome: ");
 			fflush(stdin);
 			gotoxy(x,y++);
 			gets(AlunoAux.nome);
 		}
-		
-		gotoxy(30, 10);
-		printf("Dados gravados com sucesso!");
-		getch();
 		limparQuadro();
-	}	
-
+	}
 	fclose(arq);
 }
 
@@ -642,6 +697,8 @@ char menuDisciplina(void){
 	printf("[4] Excluir");
 	gotoxy(54,19);
 	printf("Disciplinas");
+	gotoxy(54, 20);
+	printf("do Aluno");
 	
 	gotoxy(35,25);
 	printf("[5] Relatorio");

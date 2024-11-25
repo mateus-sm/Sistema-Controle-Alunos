@@ -120,29 +120,29 @@ void InserirAlunoOrdenado(TpDescritorAluno &D) {
 			
 			No = NovoNoAluno(AlunoAux);
 			
-			//1ยบ caso - caso lista estiver vazia
+			//1บ caso - caso lista estiver vazia
 			if (D.inicio == NULL) {
 				D.inicio = D.fim = No;
 			} else if (stricmp(D.inicio->nome, AlunoAux.nome) >= 0) {
-				//2ยบ caso - Elemento novo รฉ menor que Inicio
+				//2บ caso - Elemento novo eh menor que Inicio
 				No->prox = D.inicio;
 				D.inicio->ant = No;
 				D.inicio = No;
 			} else {
-				//3ยบ caso - Busca
+				//3บ caso - Busca
 				atual = D.inicio;
-				while ((atual->prox != NULL) && (stricmp(atual->nome, AlunoAux.nome) < 0)) {
+				while(atual->prox != NULL && stricmp(atual->nome, AlunoAux.nome) < 0){
 					atual = atual -> prox;
 				}
 
 				if (strcmp(atual->nome, AlunoAux.nome) >= 0) {
-					No->prox = atual;
-					atual->ant = D.fim->ant;
-					atual->ant = No;
-					atual->ant->prox = No;
+					No -> prox = atual;
+					No -> ant = atual -> ant;
+					atual -> ant -> prox = No;
+					atual -> ant = No;
 				} else {
-					No->ant = atual;
-					atual->prox = No;
+					No -> ant = atual;
+					atual -> prox = No;
 					D.fim = No;
 				}
 			}
@@ -711,7 +711,7 @@ void ExcluirAluno(TpDescritorAluno &D){
 			}
 
 			//caso esteja no meio
-			else if(atual -> ant == NULL && atual -> prox == NULL){
+			else if(atual -> ant != NULL && atual -> prox != NULL){
 				atual -> ant -> prox = atual -> prox;
 				atual -> prox = atual -> ant;
 			}
