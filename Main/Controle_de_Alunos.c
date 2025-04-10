@@ -14,7 +14,7 @@ MATEUS SILVA MACIEL
 <------------------------------>*/
 
 void GravarAluno();
-void GravarDisciplina(TpDescritorDisciplina &DescDisci);
+void GravarDisciplina(TpDescritorDisciplina *DescDisci);
 void limparQuadro(void);
 void limparTitulo(void);
 void moldura(int colunai, int linhai, int colunaf, int linhaf, int frente, int fundo);
@@ -26,11 +26,11 @@ char menuNum(void);
 char menuAlunos(void);
 void clear();
 TpAluno PercorrerListaAluno(TpDescritorAluno D);
-void PercorrerListaDisciplina(TpDescritorAluno DA, TpDescritorDisciplina D, TpDisci &disci);
-void ConectarDisciplina(TpDescritorAluno &D, TpAluno Aluno, TpDisci Disciplina);
+void PercorrerListaDisciplina(TpDescritorAluno DA, TpDescritorDisciplina D, TpDisci *disci);
+void ConectarDisciplina(TpDescritorAluno *D, TpAluno Aluno, TpDisci Disciplina);
 void ExibirDisciplinas();
-void inicializarAluno(TpAluno &A);
-void inicializarDisciplina(TpDisci &D);
+void inicializarAluno(TpAluno *A);
+void inicializarDisciplina(TpDisci *D);
 void PercorrerListaAlunoComDisciplina(TpDescritorAluno D);
 
 int main(void) {
@@ -41,8 +41,8 @@ int main(void) {
 	TpDescritorDisciplina DescDisci;
 	char op;
 	
-	InicializarDescritorAluno(DescAluno);
-	InicializarDescritorDisciplina(DescDisci);
+	InicializarDescritorAluno(&DescAluno);
+	InicializarDescritorDisciplina(&DescDisci);
 	
 	do {
 		op = menuNum();
@@ -61,17 +61,17 @@ int main(void) {
 						buscarAluno();
 					break;
 					case '3':
-						AlterarInfoAlunos(DescAluno);
+						AlterarInfoAlunos(&DescAluno);
 					break;
 					case '4':
-						ExcluirAluno(DescAluno);
+						ExcluirAluno(&DescAluno);
 					break;
 				}
 
 			break;
 
 			case '2':
-				InserirAlunoOrdenado(DescAluno);
+				InserirAlunoOrdenado(&DescAluno);
 			break;
 
 			case '3':
@@ -88,16 +88,16 @@ int main(void) {
 
 				switch(op){
 					case '1':
-						GravarDisciplina(DescDisci);
+						GravarDisciplina(&DescDisci);
 					break;
 					case '2':
 						buscarDisciplina();
 					break;
 					case '3':
-						AlterarNotasAluno(DescAluno);
+						AlterarNotasAluno(&DescAluno);
 					break;
 					case '4':
-						ExcluirNotas(DescAluno);
+						ExcluirNotas(&DescAluno);
 					break;
 					case '5':
 						RelatorioDisciplina(DescAluno);
@@ -107,7 +107,7 @@ int main(void) {
 			break;
 
 			case '5':
-				InserirOrdenadoDisciplina(DescDisci);
+				InserirOrdenadoDisciplina(&DescDisci);
 			break;
 
 			case '6':
@@ -123,15 +123,15 @@ int main(void) {
 					gotoxy(24, 10); printf("Antes de conectar use itens [2] e [5]");
 					gotoxy(24, 11); printf("para criar as listas de modo logico!!!"); getch();
 				} else {
-					inicializarAluno(Aluno);
+					inicializarAluno(&Aluno);
 					Aluno = PercorrerListaAluno(DescAluno);
 					
-					inicializarDisciplina(Disciplina);
-					PercorrerListaDisciplina(DescAluno, DescDisci, Disciplina);
+					inicializarDisciplina(&Disciplina);
+					PercorrerListaDisciplina(DescAluno, DescDisci, &Disciplina);
 
 					//Verifica se as variaveis foram alteradas
 					if (Aluno.curso[0] != '\0' && Disciplina.nota1 != 0.0) {
-						ConectarDisciplina(DescAluno, Aluno, Disciplina);
+						ConectarDisciplina(&DescAluno, Aluno, Disciplina);
 					}					
 				}
 			break;
@@ -186,28 +186,28 @@ void PercorrerListaAlunoComDisciplina(TpDescritorAluno D) {
 
 }
 
-void inicializarAluno(TpAluno &aluno) {
-	aluno.nome[0] = '\0';
-    aluno.curso[0] = '\0';
-    aluno.rua[0] = '\0';
-    aluno.bairro[0] = '\0';
-    aluno.cidade[0] = '\0';
-    aluno.estado[0] = '\0';
-    aluno.estado[1] = '\0';
-    aluno.data.d = 0;
-    aluno.data.m = 0;
-    aluno.data.a = 0;
-    aluno.ant = NULL;
-    aluno.disciplina = NULL;
-    aluno.prox = NULL;
+void inicializarAluno(TpAluno *aluno) {
+	(*aluno).nome[0] = '\0';
+    (*aluno).curso[0] = '\0';
+    (*aluno).rua[0] = '\0';
+    (*aluno).bairro[0] = '\0';
+    (*aluno).cidade[0] = '\0';
+    (*aluno).estado[0] = '\0';
+    (*aluno).estado[1] = '\0';
+    (*aluno).data.d = 0;
+    (*aluno).data.m = 0;
+    (*aluno).data.a = 0;
+    (*aluno).ant = NULL;
+    (*aluno).disciplina = NULL;
+    (*aluno).prox = NULL;
 }
 
-void inicializarDisciplina(TpDisci &disciplina) {
-	disciplina.disci[0] = '\0';  
-    disciplina.nota1 = 0.0;
-    disciplina.nota2 = 0.0;
-    disciplina.freq = 0.0; 
-    disciplina.prox = NULL;
+void inicializarDisciplina(TpDisci *disciplina) {
+	(*disciplina).disci[0] = '\0';  
+    (*disciplina).nota1 = 0.0;
+    (*disciplina).nota2 = 0.0;
+    (*disciplina).freq = 0.0; 
+    (*disciplina).prox = NULL;
 }
 
 void ExibirDisciplinas() {
@@ -231,8 +231,8 @@ void ExibirDisciplinas() {
 	fclose(arq);
 }
 
-void ConectarDisciplina(TpDescritorAluno &D, TpAluno Aluno, TpDisci Disciplina) {
-	TpAluno *AlunoAtual = D.inicio;
+void ConectarDisciplina(TpDescritorAluno *D, TpAluno Aluno, TpDisci Disciplina) {
+	TpAluno *AlunoAtual = (*D).inicio;
 	TpDisci *No = NovoNoDisciplina(Disciplina);
 
 	//Loop para chegar no aluno que vai receber a disciplina
@@ -302,7 +302,7 @@ TpAluno PercorrerListaAluno(TpDescritorAluno D) {
 	return AlunoAux;
 }
 
-void PercorrerListaDisciplina(TpDescritorAluno DA, TpDescritorDisciplina D, TpDisci &Disciplina) {
+void PercorrerListaDisciplina(TpDescritorAluno DA, TpDescritorDisciplina D, TpDisci *Disciplina) {
 	TpDisci aux;
 	TpDisci *auxExiste;
 
@@ -329,13 +329,13 @@ void PercorrerListaDisciplina(TpDescritorAluno DA, TpDescritorDisciplina D, TpDi
 
 					gotoxy(30, 10); printf("Disciplina selecionada: %s", aux.disci); getch();
 
-					strcpy(Disciplina.disci, aux.disci);
+					strcpy((*Disciplina).disci, aux.disci);
 					limparQuadro();
-					gotoxy(32, 10); printf("Digite a nota1: "); scanf("%f", &Disciplina.nota1);
+					gotoxy(32, 10); printf("Digite a nota1: "); scanf("%f", &(*Disciplina).nota1);
 					limparQuadro();
-					gotoxy(32, 10); printf("Digite a nota2: "); scanf("%f", &Disciplina.nota2);
+					gotoxy(32, 10); printf("Digite a nota2: "); scanf("%f", &(*Disciplina).nota2);
 					limparQuadro();
-					gotoxy(32, 10); printf("Digite a frequencia: "); scanf("%f", &Disciplina.freq);
+					gotoxy(32, 10); printf("Digite a frequencia: "); scanf("%f", &(*Disciplina).freq);
 				}
 
 				else{
@@ -356,7 +356,7 @@ void PercorrerListaDisciplina(TpDescritorAluno DA, TpDescritorDisciplina D, TpDi
 	fclose(arq);
 }
 
-void GravarDisciplina(TpDescritorDisciplina &D) {
+void GravarDisciplina(TpDescritorDisciplina *D) {
 	TpDisci Disciplina;
 	int l = 30, c = 10;
 

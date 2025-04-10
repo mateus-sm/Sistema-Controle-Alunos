@@ -2,40 +2,50 @@
 
 void limparQuadro(void);
 
-struct TpDisci{
+struct tpdisci {
 	char disci[TF];
 	float nota1, nota2, freq;
-	TpDisci *prox;
+	struct tpdisci *prox;
 };
 
-struct TpData{
+typedef struct tpdisci TpDisci;
+
+struct tpdata {
 	int d, m, a;
 };
 
-struct TpAluno{
+typedef struct tpdata TpData;
+
+struct tpaluno {
 	char nome[TF], curso[TF], rua[TF], bairro[TF], cidade[TF], estado[3];
 	TpData data;
-	TpAluno *prox, *ant;
+	struct tpaluno *prox, *ant;
 	TpDisci *disciplina;
 };
 
-struct TpDescritorAluno {
+typedef struct tpaluno TpAluno;
+
+struct tpdescritoraluno {
 	int qtde;
 	TpAluno *inicio, *fim;
 };
 
-struct TpDescritorDisciplina {
+typedef struct tpdescritoraluno TpDescritorAluno;
+
+struct tpdescritordisciplina {
 	int qtde;
 	TpDisci *inicio, *fim;
 };
 
-void InicializarDescritorAluno(TpDescritorAluno &D) {
-	D.qtde = 0;
-	D.inicio = D.fim = NULL;
+typedef struct tpdescritordisciplina TpDescritorDisciplina;
+
+void InicializarDescritorAluno(TpDescritorAluno *D) {
+	(*D).qtde = 0;
+	(*D).inicio = (*D).fim = NULL;
 }
 
 TpAluno *NovoNoAluno(TpAluno AlunoAux) {
-	TpAluno *aluno = new TpAluno;
+	TpAluno *aluno = (TpAluno*)malloc(sizeof(TpAluno));
 	
 	strcpy(aluno -> nome, AlunoAux.nome);
 	strcpy(aluno -> curso, AlunoAux.curso);
@@ -88,18 +98,17 @@ int BuscaDisciplina(TpDisci Disciplina, FILE *arq) {
 	return -1;
 }
 
-void ExcluirListaAlunos(TpDescritorAluno &D){
-	
-	if(D.qtde != 0){
-		TpAluno *aux = D.inicio;
-		D.inicio = D.inicio -> prox;
-		delete aux;
-		D.qtde--;
+void ExcluirListaAlunos(TpDescritorAluno *D){
+	if((*D).qtde != 0){
+		TpAluno *aux = (*D).inicio;
+		(*D).inicio = (*D).inicio -> prox;
+		free(aux);
+		(*D).qtde--;
 		ExcluirListaAlunos(D);
 	}
 }
 
-void InserirAlunoOrdenado(TpDescritorAluno &D) {
+void InserirAlunoOrdenado(TpDescritorAluno *D) {
 	
 	TpAluno *No, *ant, *atual, AlunoAux;
 	
@@ -120,17 +129,17 @@ void InserirAlunoOrdenado(TpDescritorAluno &D) {
 			
 			No = NovoNoAluno(AlunoAux);
 			
-			//1º caso - caso lista estiver vazia
-			if (D.inicio == NULL) {
-				D.inicio = D.fim = No;
-			} else if (stricmp(D.inicio->nome, AlunoAux.nome) >= 0) {
-				//2º caso - Elemento novo eh menor que Inicio
-				No->prox = D.inicio;
-				D.inicio->ant = No;
-				D.inicio = No;
+			//1ï¿½ caso - caso lista estiver vazia
+			if ((*D).inicio == NULL) {
+				(*D).inicio = (*D).fim = No;
+			} else if (stricmp((*D).inicio->nome, AlunoAux.nome) >= 0) {
+				//2ï¿½ caso - Elemento novo eh menor que Inicio
+				No->prox = (*D).inicio;
+				(*D).inicio->ant = No;
+				(*D).inicio = No;
 			} else {
-				//3º caso - Busca
-				atual = D.inicio;
+				//3ï¿½ caso - Busca
+				atual = (*D).inicio;
 				while(atual->prox != NULL && stricmp(atual->nome, AlunoAux.nome) < 0){
 					atual = atual -> prox;
 				}
@@ -143,11 +152,11 @@ void InserirAlunoOrdenado(TpDescritorAluno &D) {
 				} else {
 					No -> ant = atual;
 					atual -> prox = No;
-					D.fim = No;
+					(*D).fim = No;
 				}
 			}
 			
-			D.qtde++;
+			(*D).qtde++;
 
 			fread(&AlunoAux, sizeof(TpAluno), 1, arq);
 		}
@@ -161,7 +170,7 @@ void InserirAlunoOrdenado(TpDescritorAluno &D) {
 	getch();
 }
 
-void AlterarInfoAlunos(TpDescritorAluno &D){
+void AlterarInfoAlunos(TpDescritorAluno *D){
 	
 	//system("cls");
 	
@@ -172,7 +181,7 @@ void AlterarInfoAlunos(TpDescritorAluno &D){
 	gotoxy(30, 7);
 	printf("* * * Alterar Alunos * * *");
 
-	if(D.qtde == 0){
+	if((*D).qtde == 0){
 		gotoxy(30, 10);
 		printf("Sem alunos na lista para realizar alteracoes!");
 	}else {
@@ -182,7 +191,7 @@ void AlterarInfoAlunos(TpDescritorAluno &D){
 		gotoxy(x, y++);
 		gets(nome);
 
-		AlunoAux = D.inicio;
+		AlunoAux = (*D).inicio;
 		while(AlunoAux != NULL && stricmp(AlunoAux -> nome, nome) != 0)
 			AlunoAux = AlunoAux -> prox;
 
@@ -269,7 +278,7 @@ void AlterarInfoAlunos(TpDescritorAluno &D){
 	getch();
 }
 
-void AlterarNotasAluno(TpDescritorAluno &D){
+void AlterarNotasAluno(TpDescritorAluno *D){
 	
 	char nome[TF], disci[TF];
 	char op;
@@ -280,7 +289,7 @@ void AlterarNotasAluno(TpDescritorAluno &D){
 	gotoxy(23, 7);
 	printf("* * Alterar informacoes da disciplina * *");
 	
-	if(D.qtde == 0){
+	if((*D).qtde == 0){
 		gotoxy(30, 10);
 		printf("Sem alunos cadastrados!");
 	}	
@@ -292,7 +301,7 @@ void AlterarNotasAluno(TpDescritorAluno &D){
 		gotoxy(x, y++);
 		gets(nome);
 		
-		aux = D.inicio;
+		aux = (*D).inicio;
 		while(aux != NULL && stricmp(aux -> nome, nome) != 0)
 			aux = aux -> prox;
 			
@@ -399,14 +408,14 @@ void ExibirAluno(TpDescritorAluno D) {
 	gotoxy(32, 16); printf("Estado: %s", D.inicio -> estado);
 }
 
-void InicializarDescritorDisciplina(TpDescritorDisciplina &D) {
-	D.inicio = D.fim = NULL;
-	D.qtde = 0;
+void InicializarDescritorDisciplina(TpDescritorDisciplina *D) {
+	(*D).inicio = (*D).fim = NULL;
+	(*D).qtde = 0;
 }
 
 void ExibirAlunoComDisciplina(TpDescritorAluno D) {
 	TpDescritorDisciplina auxD;
-	InicializarDescritorDisciplina(auxD);
+	InicializarDescritorDisciplina(&auxD);
 	auxD.inicio = D.inicio->disciplina;
 	int x = 11, y = 18;
 
@@ -500,7 +509,7 @@ void ExibirAlunos(TpDescritorAluno D, int flag) {
 }
 
 TpDisci *NovoNoDisciplina(TpDisci Disciplina) {
-	TpDisci *Pont = new TpDisci;
+	TpDisci *Pont = (TpDisci*)malloc(sizeof(TpDisci));
 	
 	strcpy(Pont->disci, Disciplina.disci);
 	Pont->nota1 = Disciplina.nota1;
@@ -512,7 +521,7 @@ TpDisci *NovoNoDisciplina(TpDisci Disciplina) {
 }
 
 //Insere ordenado por nome da disciplina
-void InserirOrdenadoDisciplina(TpDescritorDisciplina &D) {
+void InserirOrdenadoDisciplina(TpDescritorDisciplina *D) {
 	TpDisci *No, *ant, *atual, DisciAux;
 
 	FILE *arq = fopen("Disciplinas.dat", "rb");
@@ -526,20 +535,20 @@ void InserirOrdenadoDisciplina(TpDescritorDisciplina &D) {
 		while(!feof(arq)) {
 			No = NovoNoDisciplina(DisciAux);
 
-			D.qtde++;
-			if (D.inicio == NULL) {
-				D.inicio = D.fim = No;
+			(*D).qtde++;
+			if ((*D).inicio == NULL) {
+				(*D).inicio = (*D).fim = No;
 			} else {
-				if (stricmp(D.inicio->disci, DisciAux.disci) >= 0) {
-					No->prox = D.inicio;
-					D.inicio = No;
+				if (stricmp((*D).inicio->disci, DisciAux.disci) >= 0) {
+					No->prox = (*D).inicio;
+					(*D).inicio = No;
 				} else {
-					if (stricmp(D.inicio->disci, DisciAux.disci) <= 0) {
-						D.fim = No;
-						D.fim->prox = No;
+					if (stricmp((*D).inicio->disci, DisciAux.disci) <= 0) {
+						(*D).fim = No;
+						(*D).fim->prox = No;
 					} else {
-						ant = D.inicio;
-						atual = D.inicio->prox;
+						ant = (*D).inicio;
+						atual = (*D).inicio->prox;
 
 						while (stricmp(atual->disci, DisciAux.disci) < 0) {
 							ant = atual;
@@ -675,13 +684,13 @@ void buscarDisciplina(void){
 	}while (strcmp(DisciAux.disci, "\0") != 0);
 }
 
-void ExcluirAluno(TpDescritorAluno &D){
+void ExcluirAluno(TpDescritorAluno *D){
 
 	TpAluno *atual;
 	TpDisci *aux;
 	char nome[TF];
 
-	if(D.inicio == NULL){
+	if((*D).inicio == NULL){
 		gotoxy(28, 10);
 		printf("NAO EXISTEM ALUNOS CADASTRADOS!");
 	}
@@ -693,7 +702,7 @@ void ExcluirAluno(TpDescritorAluno &D){
 		fflush(stdin);
 		gets(nome);
 
-		atual = D.inicio;
+		atual = (*D).inicio;
 		while(atual != NULL && stricmp(atual -> nome, nome) != 0)
 			atual = atual -> prox;
 
@@ -706,7 +715,7 @@ void ExcluirAluno(TpDescritorAluno &D){
 
 			//caso aluno esteja no inicio
 			if(atual -> ant == NULL){
-				D.inicio = atual -> prox;
+				(*D).inicio = atual -> prox;
 				atual -> prox -> ant = NULL;
 			}
 
@@ -718,7 +727,7 @@ void ExcluirAluno(TpDescritorAluno &D){
 			
 			//caso esteja no final
 			else{
-				D.fim = atual -> ant;
+				(*D).fim = atual -> ant;
 				atual -> ant -> prox = NULL;
 			}
 
@@ -726,11 +735,11 @@ void ExcluirAluno(TpDescritorAluno &D){
 			while(atual -> disciplina != NULL){
 				aux = atual -> disciplina;
 				atual -> disciplina = atual -> disciplina -> prox;
-				delete aux;
+				free(aux);
 			}
 
-			D.qtde--;
-			delete atual;
+			(*D).qtde--;
+			free(atual);
 			gotoxy(37, 13);
 			printf("Aluno excluido!");
 		}
@@ -739,7 +748,7 @@ void ExcluirAluno(TpDescritorAluno &D){
 	getch();
 }
 
-void ExcluirNotas(TpDescritorAluno &D){
+void ExcluirNotas(TpDescritorAluno *D){
 	
 	TpAluno *aux;
 	TpDisci *auxAtual, *auxProx;
@@ -748,7 +757,7 @@ void ExcluirNotas(TpDescritorAluno &D){
 	gotoxy(30, 7);
 	printf("* * * Exclusao de Disciplina * * *");
 	
-	if(D.qtde == 0){
+	if((*D).qtde == 0){
 		gotoxy(x, y++);
 		printf("Sem alunos na lista!");
 	}
@@ -760,7 +769,7 @@ void ExcluirNotas(TpDescritorAluno &D){
 		fflush(stdin);
 		gets(nome);
 		
-		aux = D.inicio;
+		aux = (*D).inicio;
 		while(aux != NULL && stricmp(aux -> nome, nome) != 0)
 			aux = aux -> prox;
 			
@@ -774,7 +783,7 @@ void ExcluirNotas(TpDescritorAluno &D){
 			if(stricmp(aux -> disciplina -> disci, disci) == 0){
 				auxAtual = aux -> disciplina;
 				aux -> disciplina = aux -> disciplina -> prox;
-				delete auxAtual;
+				free(auxAtual);
 				gotoxy(x, y++);
 				printf("Disciplina excluida!");
 			}
@@ -790,7 +799,7 @@ void ExcluirNotas(TpDescritorAluno &D){
 					
 				if(auxProx != NULL){
 					auxAtual -> prox = auxProx -> prox;
-					delete auxProx;
+					free(auxProx);
 					gotoxy(x, y++);
 					printf("Disciplina excluida!");
 				}
